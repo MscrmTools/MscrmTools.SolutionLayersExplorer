@@ -1,0 +1,144 @@
+﻿
+namespace MscrmTools.SolutionLayersExplorer.UserControls
+{
+    partial class ComponentsPicker
+    {
+        /// <summary> 
+        /// Variable nécessaire au concepteur.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Nettoyage des ressources utilisées.
+        /// </summary>
+        /// <param name="disposing">true si les ressources managées doivent être supprimées ; sinon, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Code généré par le Concepteur de composants
+
+        /// <summary> 
+        /// Méthode requise pour la prise en charge du concepteur - ne modifiez pas 
+        /// le contenu de cette méthode avec l'éditeur de code.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.lvComponents = new System.Windows.Forms.ListView();
+            this.chType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chActiveLayers = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tbsLoadActiveLayers = new System.Windows.Forms.ToolStripButton();
+            this.tsbRemoveActiveLayer = new System.Windows.Forms.ToolStripButton();
+            this.tsbCheckAll = new System.Windows.Forms.ToolStripButton();
+            this.toolStrip1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tbsLoadActiveLayers,
+            this.tsbRemoveActiveLayer,
+            this.tsbCheckAll});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(717, 34);
+            this.toolStrip1.TabIndex = 1;
+            this.toolStrip1.Text = "tsComponents";
+            // 
+            // lvComponents
+            // 
+            this.lvComponents.CheckBoxes = true;
+            this.lvComponents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.chType,
+            this.chCount,
+            this.chActiveLayers});
+            this.lvComponents.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvComponents.HideSelection = false;
+            this.lvComponents.Location = new System.Drawing.Point(0, 34);
+            this.lvComponents.MultiSelect = false;
+            this.lvComponents.Name = "lvComponents";
+            this.lvComponents.Size = new System.Drawing.Size(717, 925);
+            this.lvComponents.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lvComponents.TabIndex = 2;
+            this.lvComponents.UseCompatibleStateImageBehavior = false;
+            this.lvComponents.View = System.Windows.Forms.View.Details;
+            this.lvComponents.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvComponents_ColumnClick);
+            this.lvComponents.SelectedIndexChanged += new System.EventHandler(this.lvComponents_SelectedIndexChanged);
+            // 
+            // chType
+            // 
+            this.chType.Text = "Components";
+            this.chType.Width = 200;
+            // 
+            // chCount
+            // 
+            this.chCount.Text = "Count";
+            this.chCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // chActiveLayers
+            // 
+            this.chActiveLayers.Text = "Active layers";
+            this.chActiveLayers.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.chActiveLayers.Width = 100;
+            // 
+            // tbsLoadActiveLayers
+            // 
+            this.tbsLoadActiveLayers.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.layers;
+            this.tbsLoadActiveLayers.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbsLoadActiveLayers.Name = "tbsLoadActiveLayers";
+            this.tbsLoadActiveLayers.Size = new System.Drawing.Size(174, 29);
+            this.tbsLoadActiveLayers.Text = "Load Active layers";
+            this.tbsLoadActiveLayers.ToolTipText = "Load Active layers for checked items";
+            this.tbsLoadActiveLayers.Click += new System.EventHandler(this.tbsLoadActiveLayers_Click);
+            // 
+            // tsbRemoveActiveLayer
+            // 
+            this.tsbRemoveActiveLayer.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.layers__1_;
+            this.tsbRemoveActiveLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRemoveActiveLayer.Name = "tsbRemoveActiveLayer";
+            this.tsbRemoveActiveLayer.Size = new System.Drawing.Size(209, 29);
+            this.tsbRemoveActiveLayer.Text = "Remove Active layer(s)";
+            this.tsbRemoveActiveLayer.Click += new System.EventHandler(this.tsbRemoveActiveLayer_Click);
+            // 
+            // tsbCheckAll
+            // 
+            this.tsbCheckAll.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.check_box_with_check_sign;
+            this.tsbCheckAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbCheckAll.Name = "tsbCheckAll";
+            this.tsbCheckAll.Size = new System.Drawing.Size(101, 29);
+            this.tsbCheckAll.Text = "Check all";
+            this.tsbCheckAll.Click += new System.EventHandler(this.tsbCheckAll_Click);
+            // 
+            // ComponentsPicker
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lvComponents);
+            this.Controls.Add(this.toolStrip1);
+            this.Name = "ComponentsPicker";
+            this.Size = new System.Drawing.Size(717, 959);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ListView lvComponents;
+        private System.Windows.Forms.ColumnHeader chType;
+        private System.Windows.Forms.ColumnHeader chCount;
+        private System.Windows.Forms.ColumnHeader chActiveLayers;
+        private System.Windows.Forms.ToolStripButton tbsLoadActiveLayers;
+        private System.Windows.Forms.ToolStripButton tsbRemoveActiveLayer;
+        private System.Windows.Forms.ToolStripButton tsbCheckAll;
+    }
+}
