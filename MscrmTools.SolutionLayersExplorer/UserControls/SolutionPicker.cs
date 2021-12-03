@@ -36,7 +36,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
                     || s.GetAttributeValue<string>("friendlyname").ToLower().IndexOf(filter.ToString().ToLower()) >= 0
                     || s.GetAttributeValue<string>("uniquename").ToLower().IndexOf(filter.ToString().ToLower()) >= 0
                     )
-                    .Select(s => new ListViewItem(s.GetAttributeValue<string>("friendlyname")) { Tag = s }).ToArray());
+                    .Select(s => new ListViewItem($"{s.GetAttributeValue<string>("friendlyname")}") { SubItems = { new ListViewItem.ListViewSubItem { Text = s.GetAttributeValue<string>("version") } }, Tag = s }).ToArray());
             }));
         }
 
@@ -45,12 +45,13 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             var solutions = Service.RetrieveMultiple(new QueryExpression("solution")
             {
                 NoLock = true,
-                ColumnSet = new ColumnSet(true),
+                ColumnSet = new ColumnSet("uniquename", "friendlyname", "version"),
                 Criteria = new FilterExpression
                 {
                     Conditions =
                     {
-                        new ConditionExpression("ismanaged", ConditionOperator.Equal, true)
+                        new ConditionExpression("ismanaged", ConditionOperator.Equal, true),
+                        new ConditionExpression("isvisible", ConditionOperator.Equal, true)
                     }
                 }
             }).Entities;

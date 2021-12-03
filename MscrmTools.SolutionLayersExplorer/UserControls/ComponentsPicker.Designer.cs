@@ -30,13 +30,13 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
         private void InitializeComponent()
         {
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.tbsLoadActiveLayers = new System.Windows.Forms.ToolStripButton();
+            this.tsbRemoveActiveLayer = new System.Windows.Forms.ToolStripButton();
+            this.tsbCheckAll = new System.Windows.Forms.ToolStripButton();
             this.lvComponents = new System.Windows.Forms.ListView();
             this.chType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chActiveLayers = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tbsLoadActiveLayers = new System.Windows.Forms.ToolStripButton();
-            this.tsbRemoveActiveLayer = new System.Windows.Forms.ToolStripButton();
-            this.tsbCheckAll = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,9 +48,37 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             this.tsbCheckAll});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(717, 34);
+            this.toolStrip1.Size = new System.Drawing.Size(860, 46);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "tsComponents";
+            // 
+            // tbsLoadActiveLayers
+            // 
+            this.tbsLoadActiveLayers.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.layers;
+            this.tbsLoadActiveLayers.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbsLoadActiveLayers.Name = "tbsLoadActiveLayers";
+            this.tbsLoadActiveLayers.Size = new System.Drawing.Size(174, 41);
+            this.tbsLoadActiveLayers.Text = "Load Active layers";
+            this.tbsLoadActiveLayers.ToolTipText = "Load Active layers for checked items";
+            this.tbsLoadActiveLayers.Click += new System.EventHandler(this.tbsLoadActiveLayers_Click);
+            // 
+            // tsbRemoveActiveLayer
+            // 
+            this.tsbRemoveActiveLayer.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.layers__1_;
+            this.tsbRemoveActiveLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRemoveActiveLayer.Name = "tsbRemoveActiveLayer";
+            this.tsbRemoveActiveLayer.Size = new System.Drawing.Size(209, 41);
+            this.tsbRemoveActiveLayer.Text = "Remove Active layer(s)";
+            this.tsbRemoveActiveLayer.Click += new System.EventHandler(this.tsbRemoveActiveLayer_Click);
+            // 
+            // tsbCheckAll
+            // 
+            this.tsbCheckAll.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.check_box_with_check_sign;
+            this.tsbCheckAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbCheckAll.Name = "tsbCheckAll";
+            this.tsbCheckAll.Size = new System.Drawing.Size(101, 41);
+            this.tsbCheckAll.Text = "Check all";
+            this.tsbCheckAll.Click += new System.EventHandler(this.tsbCheckAll_Click);
             // 
             // lvComponents
             // 
@@ -61,10 +89,11 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             this.chActiveLayers});
             this.lvComponents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvComponents.HideSelection = false;
-            this.lvComponents.Location = new System.Drawing.Point(0, 34);
+            this.lvComponents.Location = new System.Drawing.Point(0, 55);
             this.lvComponents.MultiSelect = false;
+            this.lvComponents.FullRowSelect = true;
             this.lvComponents.Name = "lvComponents";
-            this.lvComponents.Size = new System.Drawing.Size(717, 925);
+            this.lvComponents.Size = new System.Drawing.Size(860, 1096);
             this.lvComponents.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lvComponents.TabIndex = 2;
             this.lvComponents.UseCompatibleStateImageBehavior = false;
@@ -87,34 +116,6 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             this.chActiveLayers.Text = "Active layers";
             this.chActiveLayers.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.chActiveLayers.Width = 100;
-            // 
-            // tbsLoadActiveLayers
-            // 
-            this.tbsLoadActiveLayers.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.layers;
-            this.tbsLoadActiveLayers.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbsLoadActiveLayers.Name = "tbsLoadActiveLayers";
-            this.tbsLoadActiveLayers.Size = new System.Drawing.Size(174, 29);
-            this.tbsLoadActiveLayers.Text = "Load Active layers";
-            this.tbsLoadActiveLayers.ToolTipText = "Load Active layers for checked items";
-            this.tbsLoadActiveLayers.Click += new System.EventHandler(this.tbsLoadActiveLayers_Click);
-            // 
-            // tsbRemoveActiveLayer
-            // 
-            this.tsbRemoveActiveLayer.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.layers__1_;
-            this.tsbRemoveActiveLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbRemoveActiveLayer.Name = "tsbRemoveActiveLayer";
-            this.tsbRemoveActiveLayer.Size = new System.Drawing.Size(209, 29);
-            this.tsbRemoveActiveLayer.Text = "Remove Active layer(s)";
-            this.tsbRemoveActiveLayer.Click += new System.EventHandler(this.tsbRemoveActiveLayer_Click);
-            // 
-            // tsbCheckAll
-            // 
-            this.tsbCheckAll.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.check_box_with_check_sign;
-            this.tsbCheckAll.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbCheckAll.Name = "tsbCheckAll";
-            this.tsbCheckAll.Size = new System.Drawing.Size(101, 29);
-            this.tsbCheckAll.Text = "Check all";
-            this.tsbCheckAll.Click += new System.EventHandler(this.tsbCheckAll_Click);
             // 
             // ComponentsPicker
             // 

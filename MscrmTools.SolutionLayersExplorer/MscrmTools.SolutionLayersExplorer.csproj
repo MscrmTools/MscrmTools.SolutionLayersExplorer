@@ -251,6 +251,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Layers.png" />
+    <None Include="Resources\icons8-cancel.png" />
     <None Include="Resources\check-box-with-check-sign.png" />
     <None Include="Resources\check-box-empty.png" />
     <None Include="Resources\layers %281%29.png" />

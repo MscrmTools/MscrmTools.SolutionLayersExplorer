@@ -32,6 +32,9 @@ namespace MscrmTools.SolutionLayersExplorer
         private void InitializeComponent()
         {
             this.toolStripMenu = new System.Windows.Forms.ToolStrip();
+            this.tsbLoadSolutions = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbCancel = new System.Windows.Forms.ToolStripButton();
             this.scMain = new System.Windows.Forms.SplitContainer();
             this.solutionPicker1 = new MscrmTools.SolutionLayersExplorer.UserControls.SolutionPicker();
             this.scType = new System.Windows.Forms.SplitContainer();
@@ -40,6 +43,7 @@ namespace MscrmTools.SolutionLayersExplorer
             this.lvItems = new System.Windows.Forms.ListView();
             this.chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.tsbRemoveActiveLayer = new System.Windows.Forms.ToolStripButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.sChanges = new ScintillaNET.Scintilla();
@@ -47,8 +51,6 @@ namespace MscrmTools.SolutionLayersExplorer
             this.sAllProperties = new ScintillaNET.Scintilla();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.sChildren = new ScintillaNET.Scintilla();
-            this.tsbRemoveActiveLayer = new System.Windows.Forms.ToolStripButton();
-            this.tbsLoadSolutions = new System.Windows.Forms.ToolStripButton();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).BeginInit();
             this.scMain.Panel1.SuspendLayout();
@@ -72,13 +74,38 @@ namespace MscrmTools.SolutionLayersExplorer
             // toolStripMenu
             // 
             this.toolStripMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tbsLoadSolutions});
+            this.tsbLoadSolutions,
+            this.toolStripSeparator1,
+            this.tsbCancel});
             this.toolStripMenu.Location = new System.Drawing.Point(0, 0);
             this.toolStripMenu.Name = "toolStripMenu";
             this.toolStripMenu.Size = new System.Drawing.Size(1569, 34);
             this.toolStripMenu.TabIndex = 4;
             this.toolStripMenu.Text = "tsMain";
             this.toolStripMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripMenu_ItemClicked);
+            // 
+            // tsbLoadSolutions
+            // 
+            this.tsbLoadSolutions.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.Dataverse_16x16;
+            this.tsbLoadSolutions.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbLoadSolutions.Name = "tsbLoadSolutions";
+            this.tsbLoadSolutions.Size = new System.Drawing.Size(148, 29);
+            this.tsbLoadSolutions.Text = "Load solutions";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 34);
+            // 
+            // tsbCancel
+            // 
+            this.tsbCancel.Enabled = false;
+            this.tsbCancel.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.icons8_cancel;
+            this.tsbCancel.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbCancel.Name = "tsbCancel";
+            this.tsbCancel.Size = new System.Drawing.Size(83, 29);
+            this.tsbCancel.Text = "Cancel";
+            this.tsbCancel.Click += new System.EventHandler(this.tsbCancel_Click);
             // 
             // scMain
             // 
@@ -163,10 +190,11 @@ namespace MscrmTools.SolutionLayersExplorer
             this.lvItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chName});
             this.lvItems.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvItems.FullRowSelect = true;
             this.lvItems.HideSelection = false;
-            this.lvItems.Location = new System.Drawing.Point(0, 34);
+            this.lvItems.Location = new System.Drawing.Point(0, 55);
             this.lvItems.Name = "lvItems";
-            this.lvItems.Size = new System.Drawing.Size(300, 1000);
+            this.lvItems.Size = new System.Drawing.Size(360, 1186);
             this.lvItems.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lvItems.TabIndex = 2;
             this.lvItems.UseCompatibleStateImageBehavior = false;
@@ -185,9 +213,18 @@ namespace MscrmTools.SolutionLayersExplorer
             this.tsbRemoveActiveLayer});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(300, 34);
+            this.toolStrip1.Size = new System.Drawing.Size(360, 46);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "tsItems";
+            // 
+            // tsbRemoveActiveLayer
+            // 
+            this.tsbRemoveActiveLayer.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.layers__1_;
+            this.tsbRemoveActiveLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRemoveActiveLayer.Name = "tsbRemoveActiveLayer";
+            this.tsbRemoveActiveLayer.Size = new System.Drawing.Size(209, 41);
+            this.tsbRemoveActiveLayer.Text = "Remove Active layer(s)";
+            this.tsbRemoveActiveLayer.Click += new System.EventHandler(this.tsbRemoveActiveLayer_Click);
             // 
             // tabControl1
             // 
@@ -273,23 +310,6 @@ namespace MscrmTools.SolutionLayersExplorer
             this.sChildren.TabIndex = 3;
             this.sChildren.TextChanged += new System.EventHandler(this.scintilla1_TextChanged);
             // 
-            // tsbRemoveActiveLayer
-            // 
-            this.tsbRemoveActiveLayer.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.layers__1_;
-            this.tsbRemoveActiveLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbRemoveActiveLayer.Name = "tsbRemoveActiveLayer";
-            this.tsbRemoveActiveLayer.Size = new System.Drawing.Size(209, 29);
-            this.tsbRemoveActiveLayer.Text = "Remove Active layer(s)";
-            this.tsbRemoveActiveLayer.Click += new System.EventHandler(this.tsbRemoveActiveLayer_Click);
-            // 
-            // tbsLoadSolutions
-            // 
-            this.tbsLoadSolutions.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.Dataverse_16x16;
-            this.tbsLoadSolutions.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbsLoadSolutions.Name = "tbsLoadSolutions";
-            this.tbsLoadSolutions.Size = new System.Drawing.Size(148, 29);
-            this.tbsLoadSolutions.Text = "Load solutions";
-            // 
             // MyPluginControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -336,7 +356,7 @@ namespace MscrmTools.SolutionLayersExplorer
         private System.Windows.Forms.ToolStrip toolStripMenu;
         private System.Windows.Forms.SplitContainer scMain;
         private UserControls.SolutionPicker solutionPicker1;
-        private System.Windows.Forms.ToolStripButton tbsLoadSolutions;
+        private System.Windows.Forms.ToolStripButton tsbLoadSolutions;
         private System.Windows.Forms.SplitContainer scType;
         private UserControls.ComponentsPicker componentsPicker1;
         private System.Windows.Forms.SplitContainer scItems;
@@ -351,5 +371,7 @@ namespace MscrmTools.SolutionLayersExplorer
         private ScintillaNET.Scintilla sChanges;
         private ScintillaNET.Scintilla sAllProperties;
         private ScintillaNET.Scintilla sChildren;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton tsbCancel;
     }
 }

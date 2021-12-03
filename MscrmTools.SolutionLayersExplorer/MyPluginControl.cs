@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using ScintillaNET;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace MscrmTools.SolutionLayersExplorer
     public partial class MyPluginControl : PluginControlBase, IPayPalPlugin, IGitHubPlugin
     {
         private List<Tuple<int, string>> componentsDefs;
+        private BackgroundWorker currentBw;
         private List<EntityMetadata> emds;
 
         public MyPluginControl()
@@ -247,6 +249,11 @@ namespace MscrmTools.SolutionLayersExplorer
         {
             var item = lvItems.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
             if (item == null) return;
+            if (((LayerItem)item.Tag).ActiveLayer == null)
+            {
+                lvItems.Items.Remove(item);
+                return;
+            }
 
             sChanges.Text = JsonPrettify(((LayerItem)item.Tag).ActiveLayer.GetAttributeValue<string>("msdyn_changes"));
             sAllProperties.Text = JsonPrettify(((LayerItem)item.Tag).ActiveLayer.GetAttributeValue<string>("msdyn_componentjson"));
@@ -263,14 +270,21 @@ namespace MscrmTools.SolutionLayersExplorer
                 return;
             }
 
+            SetRunningStatus(true);
+
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Starting active layer removal...",
+                IsCancelable = true,
                 Work = (bw, evt) =>
                 {
+                    currentBw = bw;
+
                     int current = 1;
                     foreach (var item in items)
                     {
+                        if (bw.CancellationPending) return;
+
                         var pct = 100 * current / items.Count;
                         bw.ReportProgress(pct, $"Removing Active Customizations {item.ActiveLayer.GetAttributeValue<string>("msdyn_name")} ({current}/{items.Count})");
 
@@ -306,6 +320,8 @@ namespace MscrmTools.SolutionLayersExplorer
                 },
                 PostWorkCallBack = (evt) =>
                 {
+                    SetRunningStatus(false);
+
                     if (evt.Error != null)
                     {
                         MessageBox.Show(this, $"Error when removing active layer: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -323,6 +339,16 @@ namespace MscrmTools.SolutionLayersExplorer
         {
             var ctrl = (Scintilla)sender;
             ctrl.Margins[0].Width = ctrl.Lines.Count.ToString().Length * 12;
+        }
+
+        private void SetRunningStatus(bool isRunning)
+        {
+            tsbCancel.Enabled = isRunning;
+            tsbLoadSolutions.Enabled = !isRunning;
+            solutionPicker1.Enabled = !isRunning;
+            componentsPicker1.Enabled = !isRunning;
+            tsbRemoveActiveLayer.Enabled = !isRunning;
+            lvItems.Enabled = !isRunning;
         }
 
         private void SetScintillatControl(Scintilla ctrl)
@@ -400,6 +426,12 @@ namespace MscrmTools.SolutionLayersExplorer
             ExecuteMethod(LoadSolutions);
         }
 
+        private void tsbCancel_Click(object sender, EventArgs e)
+        {
+            currentBw?.CancelAsync();
+            currentBw.ReportProgress(0, "Terminating current operation then cancelling...");
+        }
+
         private void tsbLoadActiveLayers_Click(object sender, EventArgs e)
         {
             var components = componentsPicker1.SelectedComponents;
@@ -413,13 +445,20 @@ namespace MscrmTools.SolutionLayersExplorer
                 component.SubItems[2].Text = "...";
             }
 
+            SetRunningStatus(true);
+
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Loading active layers...",
+                IsCancelable = true,
                 Work = (bw, evt) =>
                 {
+                    currentBw = bw;
+
                     foreach (var component in components)
                     {
+                        if (bw.CancellationPending) return;
+
                         var items = component.Tag as List<LayerItem>;
                         if (items == null) continue;
 
@@ -431,6 +470,8 @@ namespace MscrmTools.SolutionLayersExplorer
                 },
                 PostWorkCallBack = (evt) =>
                 {
+                    SetRunningStatus(false);
+
                     if (evt.Error != null)
                     {
                         MessageBox.Show(this, $"Error when loading components: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

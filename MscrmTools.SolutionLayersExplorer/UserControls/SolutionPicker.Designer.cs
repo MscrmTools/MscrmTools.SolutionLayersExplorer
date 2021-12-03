@@ -34,6 +34,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             this.tstbFilter = new System.Windows.Forms.ToolStripTextBox();
             this.lvSolutions = new System.Windows.Forms.ListView();
             this.chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,7 +58,6 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             // 
             // tstbFilter
             // 
-            this.tstbFilter.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.tstbFilter.Name = "tstbFilter";
             this.tstbFilter.Size = new System.Drawing.Size(200, 31);
             this.tstbFilter.TextChanged += new System.EventHandler(this.toolStripTextBox1_TextChanged);
@@ -65,12 +65,14 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             // lvSolutions
             // 
             this.lvSolutions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chName});
+            this.chName,
+            this.chVersion});
             this.lvSolutions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvSolutions.FullRowSelect = true;
             this.lvSolutions.HideSelection = false;
             this.lvSolutions.Location = new System.Drawing.Point(0, 31);
             this.lvSolutions.MultiSelect = false;
+            this.lvSolutions.FullRowSelect = true;
             this.lvSolutions.Name = "lvSolutions";
             this.lvSolutions.Size = new System.Drawing.Size(315, 977);
             this.lvSolutions.Sorting = System.Windows.Forms.SortOrder.Ascending;
@@ -82,7 +84,12 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             // chName
             // 
             this.chName.Text = "Solution";
-            this.chName.Width = 200;
+            this.chName.Width = 182;
+            // 
+            // chVersion
+            // 
+            this.chVersion.Text = "Version";
+            this.chVersion.Width = 114;
             // 
             // SolutionPicker
             // 
@@ -106,5 +113,6 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
         private System.Windows.Forms.ToolStripTextBox tstbFilter;
         private System.Windows.Forms.ListView lvSolutions;
         private System.Windows.Forms.ColumnHeader chName;
+        private System.Windows.Forms.ColumnHeader chVersion;
     }
 }
