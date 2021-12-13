@@ -8,10 +8,10 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
     {
         public static List<ListViewItem> GetCheckedOrSelectedItems(this ListView listView)
         {
-            var items = listView.SelectedItems.Cast<ListViewItem>().ToList();
-            items = items.Union(listView.CheckedItems.Cast<ListViewItem>()).ToList();
+            var checkedItems = listView.CheckedItems.Cast<ListViewItem>().ToList();
+            if (checkedItems.Count > 0) return checkedItems;
 
-            return items;
+            return listView.SelectedItems.Cast<ListViewItem>().ToList();
         }
     }
 }
