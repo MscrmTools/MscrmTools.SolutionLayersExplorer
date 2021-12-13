@@ -51,7 +51,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
                 var def = componentsDefs.FirstOrDefault(d => d.Item1 == grp.Key);
 
                 var lvi = new ListViewItem($"{def.Item2}") { SubItems = { new ListViewItem.ListViewSubItem { Text = grp.Count().ToString() } } };
-                var lis = grp.Select(g => new LayerItem { Record = g, ListViewItem = lvi }).ToList();
+                var lis = grp.Select(g => new LayerItem { Record = g, ComponentListViewItem = lvi }).ToList();
                 lvi.Tag = lis;
 
                 lvComponents.Items.Add(lvi);

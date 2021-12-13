@@ -6,12 +6,13 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
     public class LayerItem
     {
         public Entity ActiveLayer { get; set; }
+        public ListViewItem ComponentListViewItem { get; internal set; }
         public ListViewItem ListViewItem { get; internal set; }
         public Entity Record { get; set; }
 
-        public void Remove()
+        public void DecrementeParentComponentCount()
         {
-            this.ListViewItem.SubItems[2].Text = (int.Parse(this.ListViewItem.SubItems[2].Text) - 1).ToString();
+            this.ComponentListViewItem.SubItems[2].Text = (int.Parse(this.ComponentListViewItem.SubItems[2].Text) - 1).ToString();
         }
     }
 }

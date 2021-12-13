@@ -107,6 +107,8 @@ namespace MscrmTools.SolutionLayersExplorer
                 lvItems.Columns.RemoveAt(1);
             }
 
+            var list = new List<ListViewItem>();
+
             if (components.First().Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 2
                 && components.Any(c => c.ActiveLayer != null))
             {
@@ -173,25 +175,34 @@ namespace MscrmTools.SolutionLayersExplorer
                 }
                 else
                 {
-                    lvItems.Items.AddRange(components
-                               .Where(c => c.ActiveLayer != null)
-                               .Select(i => new ListViewItem(i.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
-                               {
-                                   SubItems = {
+                    foreach (var component in components.Where(c => c.ActiveLayer != null))
+                    {
+                        var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
+                        {
+                            SubItems = {
                                             new ListViewItem.ListViewSubItem
                                             {
-                                                Text = emds.First(emd => emd.MetadataId == new Guid(((JObject)((JArray)JObject.Parse(i.ActiveLayer.GetAttributeValue<string>("msdyn_componentjson"))["Attributes"]).First(o => ((JObject)o).Value<string>("Key") == "entityid")).Value<string>("Value"))).DisplayName?.UserLocalizedLabel?.Label
+                                                Text = emds.First(emd => emd.MetadataId == new Guid(((JObject)((JArray)JObject.Parse(component.ActiveLayer.GetAttributeValue<string>("msdyn_componentjson"))["Attributes"]).First(o => ((JObject)o).Value<string>("Key") == "entityid")).Value<string>("Value"))).DisplayName?.UserLocalizedLabel?.Label
                                             }
                                        },
-                                   Tag = i
-                               })
-                               .ToArray());
+                            Tag = component
+                        };
+                        component.ListViewItem = lvi;
+                        list.Add(lvi);
+                    }
                 }
 
                 return;
             }
 
-            lvItems.Items.AddRange(components.Where(c => c.ActiveLayer != null).Select(i => new ListViewItem(i.ActiveLayer.GetAttributeValue<string>("msdyn_name")) { Tag = i }).ToArray());
+            foreach (var component in components.Where(c => c.ActiveLayer != null))
+            {
+                var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name")) { Tag = component };
+                component.ListViewItem = lvi;
+                list.Add(lvi);
+            }
+
+            lvItems.Items.AddRange(list.ToArray());
         }
 
         private void LoadComponentDefinitions()
@@ -296,13 +307,8 @@ namespace MscrmTools.SolutionLayersExplorer
 
                         Invoke(new Action(() =>
                         {
-                            item.Remove();
-
-                            var lvi = lvItems.Items.Cast<ListViewItem>().FirstOrDefault(i => ((LayerItem)i.Tag).ActiveLayer.Id == item.ActiveLayer.Id);
-                            if (lvi != null)
-                            {
-                                lvItems.Items.Remove(lvi);
-                            }
+                            item.DecrementeParentComponentCount();
+                            lvItems.Items.Remove(item.ListViewItem);
 
                             sChanges.Text = string.Empty;
                             sAllProperties.Text = string.Empty;
