@@ -24,6 +24,7 @@ namespace MscrmTools.SolutionLayersExplorer
 {
     public partial class MyPluginControl : PluginControlBase, IPayPalPlugin, IGitHubPlugin
     {
+        private List<LayerItem> bulkRemoveList = new List<LayerItem>();
         private List<Tuple<int, string>> componentsDefs;
         private BackgroundWorker currentBw;
         private List<EntityMetadata> emds;
@@ -308,8 +309,22 @@ namespace MscrmTools.SolutionLayersExplorer
                         Invoke(new Action(() =>
                         {
                             item.DecrementeParentComponentCount();
-                            lvItems.Items.Remove(item.ListViewItem);
 
+                            var itemToRemove = lvItems.Items.Cast<ListViewItem>().FirstOrDefault(i => i == item.ListViewItem);
+                            if (itemToRemove != null)
+                            {
+                                lvItems.Items.Remove(itemToRemove);
+                            }
+
+                            if (bulkRemoveList.Contains(item))
+                            {
+                                if (evt.Result == null)
+                                {
+                                    evt.Result = new List<LayerItem>();
+                                }
+
+                            ((List<LayerItem>)evt.Result).Add(item);
+                            }
                             sChanges.Text = string.Empty;
                             sAllProperties.Text = string.Empty;
                             sChildren.Text = string.Empty;
@@ -326,6 +341,14 @@ namespace MscrmTools.SolutionLayersExplorer
                 },
                 PostWorkCallBack = (evt) =>
                 {
+                    if (evt.Result is List<LayerItem> list)
+                    {
+                        foreach (var item in list)
+                        {
+                            bulkRemoveList.Remove(item);
+                        }
+                    }
+
                     SetRunningStatus(false);
 
                     if (evt.Error != null)
@@ -355,6 +378,11 @@ namespace MscrmTools.SolutionLayersExplorer
             componentsPicker1.Enabled = !isRunning;
             tsbRemoveActiveLayer.Enabled = !isRunning;
             lvItems.Enabled = !isRunning;
+
+            tsbRemoveActiveLayersBulk.Text = string.Format(tsbRemoveActiveLayersBulk.Tag.ToString(), bulkRemoveList.Count, bulkRemoveList.Count > 0 ? "s" : "");
+            tsbRemoveActiveLayersBulk.Visible = !isRunning && bulkRemoveList.Count > 0;
+            tssRalSeparator.Visible = tsbRemoveActiveLayersBulk.Visible;
+            tsbClearActiveLayerList.Visible = tsbRemoveActiveLayersBulk.Visible;
         }
 
         private void SetScintillatControl(Scintilla ctrl)
@@ -429,13 +457,41 @@ namespace MscrmTools.SolutionLayersExplorer
 
         private void toolStripMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            ExecuteMethod(LoadSolutions);
+            if (e.ClickedItem == tsbLoadSolutions)
+            {
+                ExecuteMethod(LoadSolutions);
+            }
+        }
+
+        private void tsbAddToRemovalList_Click(object sender, EventArgs e)
+        {
+            var items = lvItems.GetCheckedOrSelectedItems().Select(i => (LayerItem)i.Tag)
+                .Where(i => !bulkRemoveList.Contains(i))
+                .ToList();
+
+            if (items.Count > 0)
+            {
+                bulkRemoveList.AddRange(items);
+            }
+
+            tsbRemoveActiveLayersBulk.Text = string.Format(tsbRemoveActiveLayersBulk.Tag.ToString(), bulkRemoveList.Count, bulkRemoveList.Count > 0 ? "s" : "");
+            tsbRemoveActiveLayersBulk.Visible = true;
+            tssRalSeparator.Visible = tsbRemoveActiveLayersBulk.Visible;
+            tsbClearActiveLayerList.Visible = tsbRemoveActiveLayersBulk.Visible;
         }
 
         private void tsbCancel_Click(object sender, EventArgs e)
         {
             currentBw?.CancelAsync();
-            currentBw.ReportProgress(0, "Terminating current operation then cancelling...");
+            currentBw?.ReportProgress(0, "Terminating current operation then cancelling...");
+        }
+
+        private void tsbClearActiveLayerList_Click(object sender, EventArgs e)
+        {
+            bulkRemoveList.Clear();
+            tsbRemoveActiveLayersBulk.Visible = false;
+            tssRalSeparator.Visible = tsbRemoveActiveLayersBulk.Visible;
+            tsbClearActiveLayerList.Visible = tsbRemoveActiveLayersBulk.Visible;
         }
 
         private void tsbLoadActiveLayers_Click(object sender, EventArgs e)
@@ -507,6 +563,11 @@ namespace MscrmTools.SolutionLayersExplorer
             }
 
             RemoveActiveLayers(items);
+        }
+
+        private void tsbRemoveActiveLayersBulk_Click(object sender, EventArgs e)
+        {
+            RemoveActiveLayers(bulkRemoveList);
         }
     }
 }

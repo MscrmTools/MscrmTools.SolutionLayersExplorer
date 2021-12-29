@@ -83,6 +83,16 @@ namespace MscrmTools.SolutionLayersExplorer.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Clear_16 {
+            get {
+                object obj = ResourceManager.GetObject("Clear_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Dataverse_16x16 {
             get {
                 object obj = ResourceManager.GetObject("Dataverse_16x16", resourceCulture);
