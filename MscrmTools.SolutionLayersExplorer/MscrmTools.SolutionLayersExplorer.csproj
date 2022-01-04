@@ -264,6 +264,18 @@
     <Compile Include="UserControls\ComponentsPicker.Designer.cs">
       <DependentUpon>ComponentsPicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\CustomReasons\OptionSetChangesControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\OptionSetChangesControl.Designer.cs">
+      <DependentUpon>OptionSetChangesControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\RoleChangesControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\RoleChangesControl.Designer.cs">
+      <DependentUpon>RoleChangesControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\SolutionPicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -286,6 +298,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\ComponentsPicker.resx">
       <DependentUpon>ComponentsPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\CustomReasons\OptionSetChangesControl.resx">
+      <DependentUpon>OptionSetChangesControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\CustomReasons\RoleChangesControl.resx">
+      <DependentUpon>RoleChangesControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\SolutionPicker.resx">
       <DependentUpon>SolutionPicker.cs</DependentUpon>

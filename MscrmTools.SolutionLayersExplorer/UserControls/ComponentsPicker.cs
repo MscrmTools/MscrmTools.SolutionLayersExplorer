@@ -76,15 +76,17 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             }).Entities;
 
             var rels = solutions.Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 10).ToList();
-            if(rels.Count > 0) { 
+            if (rels.Count > 0)
+            {
                 var relMetadataIds = rels
                     .Select(c => c.GetAttributeValue<Guid>("objectid"))
                     .ToList();
 
                 EntityQueryExpression entityQueryExpression = new EntityQueryExpression
                 {
-                    Criteria = new MetadataFilterExpression(LogicalOperator.And) { 
-                        Conditions={
+                    Criteria = new MetadataFilterExpression(LogicalOperator.And)
+                    {
+                        Conditions ={
                             new MetadataConditionExpression("IsActivity", MetadataConditionOperator.Equals, true)
                         }
                     },

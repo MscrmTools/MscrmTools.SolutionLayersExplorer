@@ -7,6 +7,7 @@ using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Tooling.Connector;
 using MscrmTools.SolutionLayersExplorer.AppCode;
 using MscrmTools.SolutionLayersExplorer.UserControls;
+using MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ScintillaNET;
@@ -275,6 +276,23 @@ namespace MscrmTools.SolutionLayersExplorer
             sChanges.EmptyUndoBuffer();
             sAllProperties.EmptyUndoBuffer();
             sChildren.EmptyUndoBuffer();
+
+            tbCustomReason.Controls.Clear();
+
+            if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 20)
+            {
+                var ctrl = new RoleChangesControl(sChildren.Text);
+                ctrl.DisplayCustomReason();
+                ctrl.Dock = DockStyle.Fill;
+                tbCustomReason.Controls.Add(ctrl);
+            }
+            else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 9)
+            {
+                var ctrl = new OptionSetChangesControl(sChildren.Text);
+                ctrl.DisplayCustomReason();
+                ctrl.Dock = DockStyle.Fill;
+                tbCustomReason.Controls.Add(ctrl);
+            }
         }
 
         private void RemoveActiveLayers(List<LayerItem> items)
@@ -344,7 +362,7 @@ namespace MscrmTools.SolutionLayersExplorer
                 PostWorkCallBack = (evt) =>
                 {
                     SetRunningStatus(false);
-                  
+
                     if (evt.Result is List<LayerItem> list)
                     {
                         foreach (var item in list)
@@ -352,7 +370,6 @@ namespace MscrmTools.SolutionLayersExplorer
                             bulkRemoveList.Remove(item);
                         }
                     }
-
 
                     if (evt.Error != null)
                     {
