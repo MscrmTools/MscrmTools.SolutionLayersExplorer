@@ -191,6 +191,8 @@ namespace MscrmTools.SolutionLayersExplorer
                         component.ListViewItem = lvi;
                         list.Add(lvi);
                     }
+
+                    lvItems.Items.AddRange(list.ToArray());
                 }
 
                 return;
