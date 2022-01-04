@@ -350,7 +350,7 @@ namespace MscrmTools.SolutionLayersExplorer
             this.tbCustomReason.Padding = new System.Windows.Forms.Padding(3);
             this.tbCustomReason.Size = new System.Drawing.Size(987, 1193);
             this.tbCustomReason.TabIndex = 3;
-            this.tbCustomReason.Text = "Formatted Children";
+            this.tbCustomReason.Text = "Formatted Changes";
             this.tbCustomReason.UseVisualStyleBackColor = true;
             // 
             // solutionPicker1
