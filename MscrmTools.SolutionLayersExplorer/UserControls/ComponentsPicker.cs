@@ -1,4 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Tooling.Connector;
 using MscrmTools.SolutionLayersExplorer.AppCode;
@@ -72,6 +74,34 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
                     }
                 }
             }).Entities;
+
+            var rels = solutions.Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 10).ToList();
+            if(rels.Count > 0) { 
+                var relMetadataIds = rels
+                    .Select(c => c.GetAttributeValue<Guid>("objectid"))
+                    .ToList();
+
+                EntityQueryExpression entityQueryExpression = new EntityQueryExpression
+                {
+                    Criteria = new MetadataFilterExpression(LogicalOperator.And) { 
+                        Conditions={
+                            new MetadataConditionExpression("IsActivity", MetadataConditionOperator.Equals, true)
+                        }
+                    },
+                    Properties = new MetadataPropertiesExpression("MetadataId", "LogicalName", "ManyToOneRelationships")
+                };
+
+                RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest
+                {
+                    Query = entityQueryExpression,
+                    ClientVersionStamp = null
+                };
+
+                var emds = ((RetrieveMetadataChangesResponse)Service.Execute(retrieveMetadataChangesRequest)).EntityMetadata.ToList();
+                var relsToExclude = emds.SelectMany(e => e.ManyToOneRelationships).Where(r => r.ReferencingAttribute == "regardingobjectid").Select(r => r.MetadataId).ToList();
+                _components = solutions.Except(solutions.Where(c => relsToExclude.Contains(c.GetAttributeValue<Guid>("objectid")))).ToList();
+                return;
+            }
 
             _components = solutions.ToList();
         }
