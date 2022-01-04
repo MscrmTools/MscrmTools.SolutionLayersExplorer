@@ -341,6 +341,8 @@ namespace MscrmTools.SolutionLayersExplorer
                 },
                 PostWorkCallBack = (evt) =>
                 {
+                    SetRunningStatus(false);
+                  
                     if (evt.Result is List<LayerItem> list)
                     {
                         foreach (var item in list)
@@ -349,7 +351,6 @@ namespace MscrmTools.SolutionLayersExplorer
                         }
                     }
 
-                    SetRunningStatus(false);
 
                     if (evt.Error != null)
                     {
