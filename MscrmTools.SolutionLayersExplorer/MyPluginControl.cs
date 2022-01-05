@@ -23,7 +23,7 @@ using XrmToolBox.Extensibility.Interfaces;
 
 namespace MscrmTools.SolutionLayersExplorer
 {
-    public partial class MyPluginControl : PluginControlBase, IPayPalPlugin, IGitHubPlugin
+    public partial class MyPluginControl : PluginControlBase, IPayPalPlugin, IGitHubPlugin, IMessageBusHost
     {
         private List<LayerItem> bulkRemoveList = new List<LayerItem>();
         private List<Tuple<int, string>> componentsDefs;
@@ -43,6 +43,8 @@ namespace MscrmTools.SolutionLayersExplorer
             SetScintillatControl(sChildren);
         }
 
+        public event EventHandler<MessageBusEventArgs> OnOutgoingMessage;
+
         public string DonationDescription => "Donation for Solution Layers Explorer";
 
         public string EmailAccount => "tanguy92@hotmail.com";
@@ -57,6 +59,11 @@ namespace MscrmTools.SolutionLayersExplorer
         }
 
         public object GetState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnIncomingMessage(MessageBusEventArgs message)
         {
             throw new NotImplementedException();
         }
@@ -290,6 +297,16 @@ namespace MscrmTools.SolutionLayersExplorer
             {
                 var ctrl = new OptionSetChangesControl(sChildren.Text);
                 ctrl.DisplayCustomReason();
+                ctrl.Dock = DockStyle.Fill;
+                tbCustomReason.Controls.Add(ctrl);
+            }
+            else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 80)
+            {
+                var ctrl = new ModelDrivenAppControl(((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"), Service);
+                ctrl.ComparisonRequested += (sCtrl, evt) =>
+                {
+                    OnOutgoingMessage?.Invoke(this, new MessageBusEventArgs("Advanced Component Comparer") { TargetArgument = evt.ToString() });
+                };
                 ctrl.Dock = DockStyle.Fill;
                 tbCustomReason.Controls.Add(ctrl);
             }

@@ -240,6 +240,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppCode\ActiveLayerSearch.cs" />
+    <Compile Include="AppCode\Args\ComparisonEventArgs.cs" />
     <Compile Include="AppCode\Enums.cs" />
     <Compile Include="AppCode\Extensions.cs" />
     <Compile Include="AppCode\LayerItem.cs" />
@@ -263,6 +264,12 @@
     </Compile>
     <Compile Include="UserControls\ComponentsPicker.Designer.cs">
       <DependentUpon>ComponentsPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\ModelDrivenAppControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\ModelDrivenAppControl.Designer.cs">
+      <DependentUpon>ModelDrivenAppControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserControls\CustomReasons\OptionSetChangesControl.cs">
       <SubType>UserControl</SubType>
@@ -298,6 +305,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\ComponentsPicker.resx">
       <DependentUpon>ComponentsPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\CustomReasons\ModelDrivenAppControl.resx">
+      <DependentUpon>ModelDrivenAppControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\CustomReasons\OptionSetChangesControl.resx">
       <DependentUpon>OptionSetChangesControl.cs</DependentUpon>
