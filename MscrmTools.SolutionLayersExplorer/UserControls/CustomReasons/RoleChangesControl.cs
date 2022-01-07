@@ -23,6 +23,12 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
         public void DisplayCustomReason()
         {
             var jo = JObject.Parse(_json);
+            if (!jo.ContainsKey("RolePrivileges"))
+            {
+                lvPrivs.Visible = false;
+                pnlNoChange.Visible = true;
+                return;
+            }
 
             foreach (var joPriv in ((JArray)((JObject)jo["RolePrivileges"])["Entities"]))
             {

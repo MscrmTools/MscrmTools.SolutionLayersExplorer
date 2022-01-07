@@ -31,6 +31,9 @@
             this.lvPrivs = new System.Windows.Forms.ListView();
             this.chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chDepth = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.pnlNoChange = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.pnlNoChange.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvPrivs
@@ -43,7 +46,7 @@
             this.lvPrivs.HideSelection = false;
             this.lvPrivs.Location = new System.Drawing.Point(0, 0);
             this.lvPrivs.Name = "lvPrivs";
-            this.lvPrivs.Size = new System.Drawing.Size(1056, 446);
+            this.lvPrivs.Size = new System.Drawing.Size(891, 372);
             this.lvPrivs.TabIndex = 0;
             this.lvPrivs.UseCompatibleStateImageBehavior = false;
             this.lvPrivs.View = System.Windows.Forms.View.Details;
@@ -58,13 +61,35 @@
             this.chDepth.Text = "Depth";
             this.chDepth.Width = 100;
             // 
+            // pnlNoChange
+            // 
+            this.pnlNoChange.Controls.Add(this.label1);
+            this.pnlNoChange.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlNoChange.Location = new System.Drawing.Point(0, 0);
+            this.pnlNoChange.Name = "pnlNoChange";
+            this.pnlNoChange.Size = new System.Drawing.Size(891, 372);
+            this.pnlNoChange.TabIndex = 1;
+            this.pnlNoChange.Visible = false;
+            // 
+            // label1
+            // 
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(891, 111);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "No changes for privileges found";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // RoleChangesControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.pnlNoChange);
             this.Controls.Add(this.lvPrivs);
             this.Name = "RoleChangesControl";
-            this.Size = new System.Drawing.Size(880, 372);
+            this.Size = new System.Drawing.Size(891, 372);
+            this.pnlNoChange.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -74,5 +99,7 @@
         private System.Windows.Forms.ListView lvPrivs;
         private System.Windows.Forms.ColumnHeader chName;
         private System.Windows.Forms.ColumnHeader chDepth;
+        private System.Windows.Forms.Panel pnlNoChange;
+        private System.Windows.Forms.Label label1;
     }
 }
