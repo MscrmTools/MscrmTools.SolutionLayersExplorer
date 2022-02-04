@@ -22,6 +22,12 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
 
         public void DisplayCustomReason()
         {
+            if (string.IsNullOrEmpty(_json) || _json == "{}")
+            {
+                lvPrivs.Items.Clear();
+                return;
+            }
+
             var jo = JObject.Parse(_json);
             if (!jo.ContainsKey("RolePrivileges"))
             {

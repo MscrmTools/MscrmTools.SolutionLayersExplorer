@@ -1,23 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
-	<metadata>
-		<id>MscrmTools.SolutionLayersExplorer</id>
-		<version>1.2021.12.0</version>
-		<title>Solution Layers Explorer for XrmToolBox</title>
-		<authors>MscrmTools</authors>
-		<owners></owners>
-		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<projectUrl>https://github.com/MscrmTools/MscrmTools.SolutionLayersExplorer</projectUrl>
-		<iconUrl>https://user-images.githubusercontent.com/10774317/144455029-dce97d7d-fe60-4926-bee2-857aa47445c6.png</iconUrl>
-		<description>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</description>
-		<summary>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</summary>
-		<releaseNotes>Added active layer formatted explanation for Security Roles, OptionSets and Model driven app (integrated with Advanced Component Comparer tool)</releaseNotes>
-		<tags>XrmToolBox Tool Solution Layer</tags>
-		<dependencies>
-			<dependency id="XrmToolBox" version="1.2021.1.1" />
-		</dependencies>
-	</metadata>
-	<files>
-		<file src="bin\Release\MscrmTools.SolutionLayersExplorer.dll" target="lib\net452\Plugins" />
-	</files>
+  <metadata>
+    <id>MscrmTools.SolutionLayersExplorer</id>
+    <version>1.2021.12.0</version>
+    <title>Solution Layers Explorer for XrmToolBox</title>
+    <authors>MscrmTools</authors>
+    <owners></owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectUrl>https://github.com/MscrmTools/MscrmTools.SolutionLayersExplorer</projectUrl>
+    <iconUrl>https://user-images.githubusercontent.com/10774317/144455029-dce97d7d-fe60-4926-bee2-857aa47445c6.png</iconUrl>
+    <description>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</description>
+    <summary>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</summary>
+    <releaseNotes>Fixed error when role change content is empty</releaseNotes>
+    <tags>XrmToolBox Tool Solution Layer</tags>
+    <dependencies>
+      <dependency id="XrmToolBox" version="1.2021.1.1" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\MscrmTools.SolutionLayersExplorer.dll" target="lib\net452\Plugins" />
+  </files>
 </package>
