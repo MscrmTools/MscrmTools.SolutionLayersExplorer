@@ -110,6 +110,9 @@ namespace MscrmTools.SolutionLayersExplorer
             if (components == null || components.Count == 0) return;
 
             List<Guid> entityIds = new List<Guid>();
+            List<Guid> formIds = new List<Guid>();
+            List<Guid> viewIds = new List<Guid>();
+            List<Guid> visualizationIds = new List<Guid>();
 
             if (lvItems.Columns.Count == 2)
             {
@@ -118,7 +121,11 @@ namespace MscrmTools.SolutionLayersExplorer
 
             var list = new List<ListViewItem>();
 
-            if (components.First().Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 2
+            if ((components.First().Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 2 // Attribute
+                || components.First().Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 60 // Form
+                || components.First().Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 26 // Saved query
+                || components.First().Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 59 // Saved query visualization
+                )
                 && components.Any(c => c.ActiveLayer != null))
             {
                 lvItems.Columns.Add(new ColumnHeader
@@ -129,78 +136,225 @@ namespace MscrmTools.SolutionLayersExplorer
 
                 foreach (var component in components.Where(c => c.ActiveLayer != null))
                 {
-                    var entityId = new Guid(((JObject)((JArray)JObject.Parse(component.ActiveLayer.GetAttributeValue<string>("msdyn_componentjson"))["Attributes"]).First(o => ((JObject)o).Value<string>("Key") == "entityid")).Value<string>("Value"));
-                    if (!entityIds.Contains(entityId))
+                    if (component.Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 2)
                     {
-                        entityIds.Add(entityId);
+                        var entityId = new Guid(((JObject)((JArray)JObject.Parse(component.ActiveLayer.GetAttributeValue<string>("msdyn_componentjson"))["Attributes"]).First(o => ((JObject)o).Value<string>("Key") == "entityid")).Value<string>("Value"));
+                        if (!entityIds.Contains(entityId))
+                        {
+                            entityIds.Add(entityId);
+                        }
+                    }
+                    else if (component.Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 60)
+                    {
+                        formIds.Add(component.Record.GetAttributeValue<Guid>("objectid"));
+                    }
+                    else if (component.Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 26)
+                    {
+                        viewIds.Add(component.Record.GetAttributeValue<Guid>("objectid"));
+                    }
+                    else if (component.Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 59)
+                    {
+                        visualizationIds.Add(component.Record.GetAttributeValue<Guid>("objectid"));
                     }
                 }
 
-                if (emds == null || entityIds.Any(id => emds.All(emd => emd.MetadataId != id)))
+                if (entityIds.Any())
                 {
-                    WorkAsync(
-                        new WorkAsyncInfo
-                        {
-                            Message = "Loading metadata...",
-                            Work = (bw, evt) =>
+                    if (emds == null || entityIds.Any(id => emds.All(emd => emd.MetadataId != id)))
+                    {
+                        WorkAsync(
+                            new WorkAsyncInfo
                             {
-                                EntityQueryExpression entityQueryExpression = new EntityQueryExpression
+                                Message = "Loading metadata...",
+                                Work = (bw, evt) =>
                                 {
-                                    Criteria = new MetadataFilterExpression(LogicalOperator.Or),
-                                    Properties = new MetadataPropertiesExpression("MetadataId", "DisplayName")
-                                };
+                                    EntityQueryExpression entityQueryExpression = new EntityQueryExpression
+                                    {
+                                        Criteria = new MetadataFilterExpression(LogicalOperator.Or),
+                                        Properties = new MetadataPropertiesExpression("MetadataId", "DisplayName")
+                                    };
 
-                                entityIds.ForEach(id =>
+                                    entityIds.ForEach(id =>
+                                    {
+                                        entityQueryExpression.Criteria.Conditions.Add(new MetadataConditionExpression("MetadataId", MetadataConditionOperator.Equals, id));
+                                    });
+
+                                    RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest
+                                    {
+                                        Query = entityQueryExpression,
+                                        ClientVersionStamp = null
+                                    };
+
+                                    emds = ((RetrieveMetadataChangesResponse)Service.Execute(retrieveMetadataChangesRequest)).EntityMetadata.ToList();
+                                },
+                                PostWorkCallBack = evt =>
                                 {
-                                    entityQueryExpression.Criteria.Conditions.Add(new MetadataConditionExpression("MetadataId", MetadataConditionOperator.Equals, id));
-                                });
-
-                                RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest
-                                {
-                                    Query = entityQueryExpression,
-                                    ClientVersionStamp = null
-                                };
-
-                                emds = ((RetrieveMetadataChangesResponse)Service.Execute(retrieveMetadataChangesRequest)).EntityMetadata.ToList();
-                            },
-                            PostWorkCallBack = evt =>
-                            {
-                                lvItems.Items.AddRange(components
-                                 .Where(c => c.ActiveLayer != null)
-                                 .Select(i => new ListViewItem(i.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
-                                 {
-                                     SubItems = {
+                                    lvItems.Items.AddRange(components
+                                     .Where(c => c.ActiveLayer != null)
+                                     .Select(i => new ListViewItem(i.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
+                                     {
+                                         SubItems = {
                                             new ListViewItem.ListViewSubItem
                                             {
                                                 Text = emds.First(emd => emd.MetadataId == new Guid(((JObject)((JArray)JObject.Parse(i.ActiveLayer.GetAttributeValue<string>("msdyn_componentjson"))["Attributes"]).First(o => ((JObject)o).Value<string>("Key") == "entityid")).Value<string>("Value"))).DisplayName?.UserLocalizedLabel?.Label
                                             }
-                                         },
-                                     Tag = i
-                                 })
-                                 .ToArray());
+                                             },
+                                         Tag = i
+                                     })
+                                     .ToArray());
+                                }
                             }
-                        }
-                    );
-                }
-                else
-                {
-                    foreach (var component in components.Where(c => c.ActiveLayer != null))
+                        );
+                    }
+                    else
                     {
-                        var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
+                        foreach (var component in components.Where(c => c.ActiveLayer != null))
                         {
-                            SubItems = {
+                            var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
+                            {
+                                SubItems = {
                                             new ListViewItem.ListViewSubItem
                                             {
                                                 Text = emds.First(emd => emd.MetadataId == new Guid(((JObject)((JArray)JObject.Parse(component.ActiveLayer.GetAttributeValue<string>("msdyn_componentjson"))["Attributes"]).First(o => ((JObject)o).Value<string>("Key") == "entityid")).Value<string>("Value"))).DisplayName?.UserLocalizedLabel?.Label
                                             }
                                        },
-                            Tag = component
-                        };
-                        component.ListViewItem = lvi;
-                        list.Add(lvi);
-                    }
+                                Tag = component
+                            };
+                            component.ListViewItem = lvi;
+                            list.Add(lvi);
+                        }
 
-                    lvItems.Items.AddRange(list.ToArray());
+                        lvItems.Items.AddRange(list.ToArray());
+                    }
+                }
+                else if (formIds.Any())
+                {
+                    WorkAsync(new WorkAsyncInfo
+                    {
+                        Work = (bw, evt) =>
+                        {
+                            evt.Result = Service.RetrieveMultiple(new QueryExpression("systemform")
+                            {
+                                NoLock = true,
+                                ColumnSet = new ColumnSet("objecttypecode"),
+                                Criteria = new FilterExpression
+                                {
+                                    Conditions =
+                                    {
+                                        new ConditionExpression("formid", ConditionOperator.In, formIds.ToArray())
+                                    }
+                                }
+                            }).Entities.ToList();
+                        },
+                        PostWorkCallBack = (evt) =>
+                        {
+                            var forms = (List<Entity>)evt.Result;
+
+                            foreach (var component in components.Where(c => c.ActiveLayer != null))
+                            {
+                                var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
+                                {
+                                    SubItems = {
+                                            new ListViewItem.ListViewSubItem
+                                            {
+                                                Text = forms.First(f => f.Id == component.Record.GetAttributeValue<Guid>("objectid")).GetAttributeValue<string>("objecttypecode")
+                                            }
+                                       },
+                                    Tag = component
+                                };
+                                component.ListViewItem = lvi;
+                                list.Add(lvi);
+                            }
+
+                            lvItems.Items.AddRange(list.ToArray());
+                        }
+                    });
+                }
+                else if (viewIds.Any())
+                {
+                    WorkAsync(new WorkAsyncInfo
+                    {
+                        Work = (bw, evt) =>
+                        {
+                            evt.Result = Service.RetrieveMultiple(new QueryExpression("savedquery")
+                            {
+                                NoLock = true,
+                                ColumnSet = new ColumnSet("returnedtypecode"),
+                                Criteria = new FilterExpression
+                                {
+                                    Conditions =
+                                    {
+                                        new ConditionExpression("savedqueryid", ConditionOperator.In, viewIds.ToArray())
+                                    }
+                                }
+                            }).Entities.ToList();
+                        },
+                        PostWorkCallBack = (evt) =>
+                        {
+                            var views = (List<Entity>)evt.Result;
+
+                            foreach (var component in components.Where(c => c.ActiveLayer != null))
+                            {
+                                var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
+                                {
+                                    SubItems = {
+                                            new ListViewItem.ListViewSubItem
+                                            {
+                                                Text = views.First(f => f.Id == component.Record.GetAttributeValue<Guid>("objectid")).GetAttributeValue<string>("returnedtypecode")
+                                            }
+                                       },
+                                    Tag = component
+                                };
+                                component.ListViewItem = lvi;
+                                list.Add(lvi);
+                            }
+
+                            lvItems.Items.AddRange(list.ToArray());
+                        }
+                    });
+                }
+                else if (visualizationIds.Any())
+                {
+                    WorkAsync(new WorkAsyncInfo
+                    {
+                        Work = (bw, evt) =>
+                        {
+                            evt.Result = Service.RetrieveMultiple(new QueryExpression("savedqueryvisualization")
+                            {
+                                NoLock = true,
+                                ColumnSet = new ColumnSet("primaryentitytypecode"),
+                                Criteria = new FilterExpression
+                                {
+                                    Conditions =
+                                    {
+                                        new ConditionExpression("savedqueryvisualizationid", ConditionOperator.In, visualizationIds.ToArray())
+                                    }
+                                }
+                            }).Entities.ToList();
+                        },
+                        PostWorkCallBack = (evt) =>
+                        {
+                            var visualizations = (List<Entity>)evt.Result;
+
+                            foreach (var component in components.Where(c => c.ActiveLayer != null))
+                            {
+                                var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
+                                {
+                                    SubItems = {
+                                            new ListViewItem.ListViewSubItem
+                                            {
+                                                Text = visualizations.First(f => f.Id == component.Record.GetAttributeValue<Guid>("objectid")).GetAttributeValue<string>("primaryentitytypecode")
+                                            }
+                                       },
+                                    Tag = component
+                                };
+                                component.ListViewItem = lvi;
+                                list.Add(lvi);
+                            }
+
+                            lvItems.Items.AddRange(list.ToArray());
+                        }
+                    });
                 }
 
                 return;

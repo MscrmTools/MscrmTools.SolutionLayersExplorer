@@ -50,7 +50,10 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
 
             foreach (var grp in grps.OrderBy(g => g.Key))
             {
+                if (grp == null) continue;
+
                 var def = componentsDefs.FirstOrDefault(d => d.Item1 == grp.Key);
+                if (def == null) continue;
 
                 var lvi = new ListViewItem($"{def.Item2}") { SubItems = { new ListViewItem.ListViewSubItem { Text = grp.Count().ToString() } } };
                 var lis = grp.Select(g => new LayerItem { Record = g, ComponentListViewItem = lvi }).ToList();
