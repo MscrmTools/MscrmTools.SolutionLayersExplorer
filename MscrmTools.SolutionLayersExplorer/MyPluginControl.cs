@@ -677,6 +677,14 @@ namespace MscrmTools.SolutionLayersExplorer
             currentBw?.ReportProgress(0, "Terminating current operation then cancelling...");
         }
 
+        private void tsbCheckAll_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lvItems.Items)
+            {
+                item.Checked = true;
+            }
+        }
+
         private void tsbClearActiveLayerList_Click(object sender, EventArgs e)
         {
             bulkRemoveList.Clear();
@@ -738,7 +746,7 @@ namespace MscrmTools.SolutionLayersExplorer
                 },
                 ProgressChanged = evt =>
                 {
-                    SetWorkingMessage($"{evt.UserState} ({evt.ProgressPercentage}%) ...");
+                    SetWorkingMessage(evt.UserState.ToString());
                 }
             });
         }

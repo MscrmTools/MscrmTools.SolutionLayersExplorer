@@ -60,7 +60,7 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
                 processed++;
                 progress = (decimal)processed / items.Count * 100;
 
-                bw.ReportProgress(Convert.ToInt32(progress), $"Loading active layers for {componentType}");
+                bw.ReportProgress(Convert.ToInt32(progress), $"Loading active layers for {componentType} ({Convert.ToInt32(progress)})...");
 
                 if (_bulk.Requests.Count == 500)
                 {
