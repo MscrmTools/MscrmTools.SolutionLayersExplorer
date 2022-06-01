@@ -12,9 +12,7 @@
     <description>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</description>
     <summary>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</summary>
     <releaseNotes>
-      Added entity name display for forms
-      Added entity name display for views
-      Added entity name display for charts
+      Added check of sub components for entities added globally to solution : Attributes, Relationships, Forms, Views and Charts
     </releaseNotes>
     <tags>XrmToolBox Tool Solution Layer</tags>
     <dependencies>
