@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Tooling.Connector;
@@ -78,6 +79,9 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
                 }
             }).Entities;
 
+            _components = solutions.ToList();
+
+            List<EntityMetadata> emds = new List<EntityMetadata>();
             var rels = solutions.Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 10).ToList();
             if (rels.Count > 0)
             {
@@ -102,13 +106,130 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
                     ClientVersionStamp = null
                 };
 
-                var emds = ((RetrieveMetadataChangesResponse)Service.Execute(retrieveMetadataChangesRequest)).EntityMetadata.ToList();
+                emds = ((RetrieveMetadataChangesResponse)Service.Execute(retrieveMetadataChangesRequest)).EntityMetadata.ToList();
                 var relsToExclude = emds.SelectMany(e => e.ManyToOneRelationships).Where(r => r.ReferencingAttribute == "regardingobjectid").Select(r => r.MetadataId).ToList();
-                _components = solutions.Except(solutions.Where(c => relsToExclude.Contains(c.GetAttributeValue<Guid>("objectid")))).ToList();
-                return;
+                _components = _components.Except(solutions.Where(c => relsToExclude.Contains(c.GetAttributeValue<Guid>("objectid")))).ToList();
             }
 
-            _components = solutions.ToList();
+            emds = new List<EntityMetadata>();
+            var fullEntities = solutions.Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 1 && c.GetAttributeValue<OptionSetValue>("rootcomponentbehavior").Value == 0).ToList();
+            if (fullEntities.Any())
+            {
+                var entityQueryExpression = new EntityQueryExpression
+                {
+                    Criteria = new MetadataFilterExpression(LogicalOperator.And)
+                    {
+                        Conditions ={
+                            new MetadataConditionExpression("MetadataId", MetadataConditionOperator.In, fullEntities.Select(fe => fe.GetAttributeValue<Guid>("objectid")).ToArray())
+                        }
+                    },
+                    Properties = new MetadataPropertiesExpression("LogicalName", "Attributes", "OneToManyRelationships", "ManyToOneRelationships", "ManyToManyRelationships"),
+                    AttributeQuery = new AttributeQueryExpression
+                    {
+                        Properties = new MetadataPropertiesExpression("MetadataId"),
+                        Criteria = new MetadataFilterExpression
+                        {
+                            Conditions =
+                            {
+                                new MetadataConditionExpression("IsManaged", MetadataConditionOperator.Equals, true)
+                            }
+                        }
+                    },
+                    RelationshipQuery = new RelationshipQueryExpression
+                    {
+                        Properties = new MetadataPropertiesExpression("MetadataId"),
+                        Criteria = new MetadataFilterExpression
+                        {
+                            Conditions =
+                            {
+                                new MetadataConditionExpression("IsManaged", MetadataConditionOperator.Equals, true)
+                            }
+                        }
+                    }
+                };
+
+                RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest
+                {
+                    Query = entityQueryExpression,
+                    ClientVersionStamp = null
+                };
+
+                emds = ((RetrieveMetadataChangesResponse)Service.Execute(retrieveMetadataChangesRequest)).EntityMetadata.ToList();
+
+                // Attributs
+                _components.AddRange(emds.SelectMany(e => e.Attributes).Select(e => new Entity("solutioncomponent")
+                {
+                    ["objectid"] = e.MetadataId,
+                    ["componenttype"] = new OptionSetValue(2),
+                }).ToArray());
+
+                // Relations
+                _components.AddRange(emds.SelectMany(e => e.Attributes).Select(e => new Entity("solutioncomponent")
+                {
+                    ["objectid"] = e.MetadataId,
+                    ["componenttype"] = new OptionSetValue(10),
+                }).ToArray());
+
+                // Formulaires
+                var forms = Service.RetrieveMultiple(new QueryExpression("systemform")
+                {
+                    NoLock = true,
+                    ColumnSet = new ColumnSet("name"),
+                    Criteria = new FilterExpression
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression("objecttypecode", ConditionOperator.In, emds.Select(e=>e.LogicalName).ToArray())
+                        }
+                    }
+                });
+
+                _components.AddRange(forms.Entities.Select(e => new Entity("solutioncomponent")
+                {
+                    ["objectid"] = e.Id,
+                    ["componenttype"] = new OptionSetValue(60),
+                }).ToArray());
+
+                // Vues
+                var queries = Service.RetrieveMultiple(new QueryExpression("savedquery")
+                {
+                    NoLock = true,
+                    ColumnSet = new ColumnSet("name"),
+                    Criteria = new FilterExpression
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression("returnedtypecode", ConditionOperator.In, emds.Select(e=>e.LogicalName).ToArray())
+                        }
+                    }
+                });
+
+                _components.AddRange(queries.Entities.Select(e => new Entity("solutioncomponent")
+                {
+                    ["objectid"] = e.Id,
+                    ["componenttype"] = new OptionSetValue(26),
+                }).ToArray());
+
+                // Charts
+                var charts = Service.RetrieveMultiple(new QueryExpression("savedqueryvisualization")
+                {
+                    NoLock = true,
+                    ColumnSet = new ColumnSet("name"),
+                    Criteria = new FilterExpression
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression("primaryentitytypecode", ConditionOperator.In, emds.Select(e=>e.LogicalName).ToArray())
+                        }
+                    }
+                });
+
+                _components.AddRange(charts.Entities.Select(e => new Entity("solutioncomponent")
+                {
+                    ["objectid"] = e.Id,
+                    ["componenttype"] = new OptionSetValue(59),
+                }).ToArray());
+            }
         }
 
         internal void UncheckAll()

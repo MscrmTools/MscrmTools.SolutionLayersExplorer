@@ -718,7 +718,7 @@ namespace MscrmTools.SolutionLayersExplorer
                         bw.ReportProgress(0, $"Loading active layers for {component.Text}...");
 
                         var als = new ActiveLayerSearch((CrmServiceClient)Service);
-                        als.GetActiveLayers(items);
+                        als.GetActiveLayers(items, bw, component.Text);
                     }
                 },
                 PostWorkCallBack = (evt) =>
@@ -738,7 +738,7 @@ namespace MscrmTools.SolutionLayersExplorer
                 },
                 ProgressChanged = evt =>
                 {
-                    SetWorkingMessage(evt.UserState.ToString());
+                    SetWorkingMessage($"{evt.UserState} ({evt.ProgressPercentage}%) ...");
                 }
             });
         }

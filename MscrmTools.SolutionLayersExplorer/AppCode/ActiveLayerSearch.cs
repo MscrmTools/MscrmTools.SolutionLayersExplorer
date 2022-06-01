@@ -4,6 +4,7 @@ using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Tooling.Connector;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace MscrmTools.SolutionLayersExplorer.AppCode
@@ -28,10 +29,12 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
             };
         }
 
-        public void GetActiveLayers(List<LayerItem> items)
+        public void GetActiveLayers(List<LayerItem> items, BackgroundWorker bw, string componentType)
         {
             _bulk.Requests = new OrganizationRequestCollection();
 
+            decimal progress = 0;
+            int processed = 0;
             foreach (var item in items)
             {
                 _bulk.Requests.Add(new RetrieveMultipleRequest
@@ -51,15 +54,37 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
                         }
                     }
                 });
+
+                processed++;
+                progress = (decimal)processed / items.Count * 100;
+
+                bw.ReportProgress(Convert.ToInt32(progress), $"Loading active layers for {componentType}");
+
+                if (_bulk.Requests.Count == 500)
+                {
+                    var bulkResp = (ExecuteMultipleResponse)_service.Execute(_bulk);
+                    foreach (var response in bulkResp.Responses)
+                    {
+                        var request = (RetrieveMultipleRequest)_bulk.Requests[response.RequestIndex];
+                        var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.Last().Values.First();
+
+                        items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId).ActiveLayer = ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities.FirstOrDefault();
+                    }
+
+                    _bulk.Requests.Clear();
+                }
             }
 
-            var bulkResp = (ExecuteMultipleResponse)_service.Execute(_bulk);
-            foreach (var response in bulkResp.Responses)
+            if (_bulk.Requests.Count > 0)
             {
-                var request = (RetrieveMultipleRequest)_bulk.Requests[response.RequestIndex];
-                var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.Last().Values.First();
+                var bulkResp = (ExecuteMultipleResponse)_service.Execute(_bulk);
+                foreach (var response in bulkResp.Responses)
+                {
+                    var request = (RetrieveMultipleRequest)_bulk.Requests[response.RequestIndex];
+                    var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.Last().Values.First();
 
-                items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId).ActiveLayer = ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities.FirstOrDefault();
+                    items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId).ActiveLayer = ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities.FirstOrDefault();
+                }
             }
         }
     }
