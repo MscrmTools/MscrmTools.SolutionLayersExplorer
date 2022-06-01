@@ -37,6 +37,8 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
             int processed = 0;
             foreach (var item in items)
             {
+                if (bw.CancellationPending) return;
+
                 _bulk.Requests.Add(new RetrieveMultipleRequest
                 {
                     Query = new QueryExpression("msdyn_componentlayer")
