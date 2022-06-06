@@ -12,7 +12,7 @@
     <description>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</description>
     <summary>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</summary>
     <releaseNotes>
-      Added check of sub components for entities added globally to solution : Attributes, Relationships, Forms, Views and Charts
+      Added comparison capability for forms, views and webresources using Advanced Component Comparer tool
     </releaseNotes>
     <tags>XrmToolBox Tool Solution Layer</tags>
     <dependencies>
