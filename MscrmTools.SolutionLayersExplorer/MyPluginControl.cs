@@ -464,6 +464,16 @@ namespace MscrmTools.SolutionLayersExplorer
                 };
                 tbCustomReason.Controls.Add(ctrl);
             }
+            else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 29)
+            {
+                var ctrl = new ProcessControl(((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"), Service);
+                ctrl.Dock = DockStyle.Fill;
+                ctrl.ComparisonRequested += (sCtrl, evt) =>
+                {
+                    OnOutgoingMessage?.Invoke(this, new MessageBusEventArgs("Advanced Component Comparer") { TargetArgument = evt.ToString() });
+                };
+                tbCustomReason.Controls.Add(ctrl);
+            }
             else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 60)
             {
                 var ctrl = new FormControl(((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"));

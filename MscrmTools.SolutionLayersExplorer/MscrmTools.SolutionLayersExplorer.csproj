@@ -271,6 +271,12 @@
     <Compile Include="UserControls\CustomReasons\FormControl.Designer.cs">
       <DependentUpon>FormControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\CustomReasons\ProcessControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\ProcessControl.Designer.cs">
+      <DependentUpon>ProcessControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\CustomReasons\WebresourceControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -326,6 +332,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\CustomReasons\FormControl.resx">
       <DependentUpon>FormControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\CustomReasons\ProcessControl.resx">
+      <DependentUpon>ProcessControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\CustomReasons\WebresourceControl.resx">
       <DependentUpon>WebresourceControl.cs</DependentUpon>
