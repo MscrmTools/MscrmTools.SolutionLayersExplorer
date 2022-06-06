@@ -454,6 +454,36 @@ namespace MscrmTools.SolutionLayersExplorer
                 ctrl.Dock = DockStyle.Fill;
                 tbCustomReason.Controls.Add(ctrl);
             }
+            else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 26)
+            {
+                var ctrl = new SavedQueryControl(((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"));
+                ctrl.Dock = DockStyle.Fill;
+                ctrl.ComparisonRequested += (sCtrl, evt) =>
+                {
+                    OnOutgoingMessage?.Invoke(this, new MessageBusEventArgs("Advanced Component Comparer") { TargetArgument = evt.ToString() });
+                };
+                tbCustomReason.Controls.Add(ctrl);
+            }
+            else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 60)
+            {
+                var ctrl = new FormControl(((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"));
+                ctrl.Dock = DockStyle.Fill;
+                ctrl.ComparisonRequested += (sCtrl, evt) =>
+                {
+                    OnOutgoingMessage?.Invoke(this, new MessageBusEventArgs("Advanced Component Comparer") { TargetArgument = evt.ToString() });
+                };
+                tbCustomReason.Controls.Add(ctrl);
+            }
+            else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 61)
+            {
+                var ctrl = new WebresourceControl(((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"), Service);
+                ctrl.Dock = DockStyle.Fill;
+                ctrl.ComparisonRequested += (sCtrl, evt) =>
+                {
+                    OnOutgoingMessage?.Invoke(this, new MessageBusEventArgs("Advanced Component Comparer") { TargetArgument = evt.ToString() });
+                };
+                tbCustomReason.Controls.Add(ctrl);
+            }
             else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 80)
             {
                 var ctrl = new ModelDrivenAppControl(((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"), Service);

@@ -265,6 +265,24 @@
     <Compile Include="UserControls\ComponentsPicker.Designer.cs">
       <DependentUpon>ComponentsPicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\CustomReasons\FormControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\FormControl.Designer.cs">
+      <DependentUpon>FormControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\WebresourceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\WebresourceControl.Designer.cs">
+      <DependentUpon>WebresourceControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\SavedQueryControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\SavedQueryControl.Designer.cs">
+      <DependentUpon>SavedQueryControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\CustomReasons\ModelDrivenAppControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -305,6 +323,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\ComponentsPicker.resx">
       <DependentUpon>ComponentsPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\CustomReasons\FormControl.resx">
+      <DependentUpon>FormControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\CustomReasons\WebresourceControl.resx">
+      <DependentUpon>WebresourceControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\CustomReasons\SavedQueryControl.resx">
+      <DependentUpon>SavedQueryControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\CustomReasons\ModelDrivenAppControl.resx">
       <DependentUpon>ModelDrivenAppControl.cs</DependentUpon>
