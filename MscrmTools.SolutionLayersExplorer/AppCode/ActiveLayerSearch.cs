@@ -35,6 +35,7 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
 
             decimal progress = 0;
             int processed = 0;
+            bool needPrecision = false;
             foreach (var item in items)
             {
                 if (bw.CancellationPending) return;
@@ -60,10 +61,14 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
                 processed++;
                 progress = (decimal)processed / items.Count * 100;
 
-                bw.ReportProgress(Convert.ToInt32(progress), $"Loading active layers for {componentType} ({Convert.ToInt32(progress)})...");
-
                 if (_bulk.Requests.Count == 500)
                 {
+                    if (progress < 100 || needPrecision)
+                    {
+                        bw.ReportProgress(Convert.ToInt32(progress), $"Loading active layers for {componentType} ({Convert.ToInt32(progress)}%)...");
+                        needPrecision = true;
+                    }
+
                     var bulkResp = (ExecuteMultipleResponse)_service.Execute(_bulk);
                     foreach (var response in bulkResp.Responses)
                     {
@@ -79,6 +84,12 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
 
             if (_bulk.Requests.Count > 0)
             {
+                if (progress < 100 || needPrecision)
+                {
+                    bw.ReportProgress(Convert.ToInt32(progress), $"Loading active layers for {componentType} ({Convert.ToInt32(progress)}%)...");
+                    needPrecision = true;
+                }
+
                 var bulkResp = (ExecuteMultipleResponse)_service.Execute(_bulk);
                 foreach (var response in bulkResp.Responses)
                 {
