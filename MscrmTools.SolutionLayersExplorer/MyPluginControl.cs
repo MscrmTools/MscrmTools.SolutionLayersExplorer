@@ -23,7 +23,7 @@ using XrmToolBox.Extensibility.Interfaces;
 
 namespace MscrmTools.SolutionLayersExplorer
 {
-    public partial class MyPluginControl : PluginControlBase, IPayPalPlugin, IGitHubPlugin, IMessageBusHost
+    public partial class MyPluginControl : PluginControlBase, IPayPalPlugin, IGitHubPlugin, IMessageBusHost, IHelpPlugin
     {
         private List<LayerItem> bulkRemoveList = new List<LayerItem>();
         private List<Tuple<int, string>> componentsDefs;
@@ -49,6 +49,7 @@ namespace MscrmTools.SolutionLayersExplorer
 
         public string EmailAccount => "tanguy92@hotmail.com";
 
+        public string HelpUrl => "https://github.com/MscrmTools/MscrmTools.SolutionLayersExplorer/wiki/Documentation";
         public string RepositoryName => "MscrmTools.SolutionLayersExplorer";
 
         public string UserName => "MscrmTools";
