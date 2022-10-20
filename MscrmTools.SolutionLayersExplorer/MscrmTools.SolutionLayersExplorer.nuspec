@@ -12,7 +12,7 @@
     <description>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</description>
     <summary>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</summary>
     <releaseNotes>
-      Added comparison capability for forms, views, processes and webresources using Advanced Component Comparer tool
+      Added layers properties comparison
     </releaseNotes>
     <tags>XrmToolBox Tool Solution Layer</tags>
     <dependencies>
@@ -20,6 +20,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\MscrmTools.SolutionLayersExplorer.dll" target="lib\net452\Plugins" />
+    <file src="bin\Release\Plugins\MscrmTools.SolutionLayersExplorer.dll" target="lib\net452\Plugins" />
   </files>
 </package>
