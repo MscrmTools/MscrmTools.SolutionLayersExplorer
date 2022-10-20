@@ -77,6 +77,17 @@ namespace MscrmTools.SolutionLayersExplorer
             base.UpdateConnection(newService, detail, actionName, parameter);
 
             emds = null;
+
+            lvItems.Items.Clear();
+            sChildren.Text = "";
+            sAllProperties.Text = "";
+            sChanges.Text = "";
+            tsbCompareFullScreen.Visible = false;
+            tsbRemoveFullScreen.Visible = false;
+            tbCustomReason.Controls.Clear();
+            componentsPicker1.Clear();
+
+            LoadSolutions();
         }
 
         private static string JsonPrettify(string json)
@@ -108,6 +119,12 @@ namespace MscrmTools.SolutionLayersExplorer
         private void ComponentsPicker1_OnSelected(object sender, EventArgs e)
         {
             lvItems.Items.Clear();
+            sChildren.Text = "";
+            sAllProperties.Text = "";
+            sChanges.Text = "";
+            tbCustomReason.Controls.Clear();
+            tsbCompareFullScreen.Visible = false;
+            tsbRemoveFullScreen.Visible = false;
 
             var components = componentsPicker1.SelectedComponent;
             if (components == null || components.Count == 0) return;

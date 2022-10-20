@@ -34,6 +34,11 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
         public List<ListViewItem> SelectedComponents => lvComponents.GetCheckedOrSelectedItems();
         public CrmServiceClient Service { get; set; }
 
+        public void Clear()
+        {
+            lvComponents.Items.Clear();
+        }
+
         public void DisplayActiveLayers()
         {
             foreach (var item in lvComponents.Items.Cast<ListViewItem>())
