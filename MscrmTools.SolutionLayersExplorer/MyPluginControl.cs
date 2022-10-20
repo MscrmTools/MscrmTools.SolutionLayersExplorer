@@ -80,6 +80,8 @@ namespace MscrmTools.SolutionLayersExplorer
 
         private static string JsonPrettify(string json)
         {
+            if (string.IsNullOrEmpty(json)) return string.Empty;
+
             using (var stringReader = new StringReader(json))
             using (var stringWriter = new StringWriter())
             {
@@ -440,24 +442,34 @@ namespace MscrmTools.SolutionLayersExplorer
 
             tbCustomReason.Controls.Clear();
 
+            var glcc = new GenericLayersComparerControl((LayerItem)item.Tag);
+            glcc.Height = 120;
+            glcc.Dock = DockStyle.Fill;
+            glcc.OnFullScreenRequested += (glccCtrl, evt) => { tsbCompareFullScreen_Click(glccCtrl, evt); };
+            tbCustomReason.Controls.Add(glcc);
+
             if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 20)
             {
-                var ctrl = new RoleChangesControl(sChildren.Text);
+                var ctrl = new RoleChangesControl(sChildren.Text, sAllProperties.Text);
+                ctrl.ComparisonRequested += (sCtrl, evt) =>
+                {
+                    OnOutgoingMessage?.Invoke(this, new MessageBusEventArgs("Advanced Component Comparer") { TargetArgument = evt.ToString() });
+                };
                 ctrl.DisplayCustomReason();
-                ctrl.Dock = DockStyle.Fill;
+                ctrl.Dock = DockStyle.Top;
                 tbCustomReason.Controls.Add(ctrl);
             }
             else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 9)
             {
                 var ctrl = new OptionSetChangesControl(sChildren.Text);
                 ctrl.DisplayCustomReason();
-                ctrl.Dock = DockStyle.Fill;
+                ctrl.Dock = DockStyle.Top;
                 tbCustomReason.Controls.Add(ctrl);
             }
             else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 26)
             {
                 var ctrl = new SavedQueryControl(((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"));
-                ctrl.Dock = DockStyle.Fill;
+                ctrl.Dock = DockStyle.Top;
                 ctrl.ComparisonRequested += (sCtrl, evt) =>
                 {
                     OnOutgoingMessage?.Invoke(this, new MessageBusEventArgs("Advanced Component Comparer") { TargetArgument = evt.ToString() });
@@ -467,7 +479,7 @@ namespace MscrmTools.SolutionLayersExplorer
             else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 29)
             {
                 var ctrl = new ProcessControl(((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"), Service);
-                ctrl.Dock = DockStyle.Fill;
+                ctrl.Dock = DockStyle.Top;
                 ctrl.ComparisonRequested += (sCtrl, evt) =>
                 {
                     OnOutgoingMessage?.Invoke(this, new MessageBusEventArgs("Advanced Component Comparer") { TargetArgument = evt.ToString() });
@@ -476,8 +488,8 @@ namespace MscrmTools.SolutionLayersExplorer
             }
             else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 60)
             {
-                var ctrl = new FormControl(((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"));
-                ctrl.Dock = DockStyle.Fill;
+                var ctrl = new GenericCustomReasonControl("systemform", "formxml", ((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"));
+                ctrl.Dock = DockStyle.Top;
                 ctrl.ComparisonRequested += (sCtrl, evt) =>
                 {
                     OnOutgoingMessage?.Invoke(this, new MessageBusEventArgs("Advanced Component Comparer") { TargetArgument = evt.ToString() });
@@ -487,7 +499,7 @@ namespace MscrmTools.SolutionLayersExplorer
             else if (((LayerItem)item.Tag).Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 61)
             {
                 var ctrl = new WebresourceControl(((LayerItem)item.Tag).Record.GetAttributeValue<Guid>("objectid"), Service);
-                ctrl.Dock = DockStyle.Fill;
+                ctrl.Dock = DockStyle.Top;
                 ctrl.ComparisonRequested += (sCtrl, evt) =>
                 {
                     OnOutgoingMessage?.Invoke(this, new MessageBusEventArgs("Advanced Component Comparer") { TargetArgument = evt.ToString() });
@@ -501,7 +513,7 @@ namespace MscrmTools.SolutionLayersExplorer
                 {
                     OnOutgoingMessage?.Invoke(this, new MessageBusEventArgs("Advanced Component Comparer") { TargetArgument = evt.ToString() });
                 };
-                ctrl.Dock = DockStyle.Fill;
+                ctrl.Dock = DockStyle.Top;
                 tbCustomReason.Controls.Add(ctrl);
             }
         }
@@ -565,7 +577,7 @@ namespace MscrmTools.SolutionLayersExplorer
                             sChildren.EmptyUndoBuffer();
                         }));
 
-                        item.ActiveLayer = null;
+                        item.RemoveActiveLayer();
 
                         current++;
                     }
@@ -733,6 +745,19 @@ namespace MscrmTools.SolutionLayersExplorer
             tsbClearActiveLayerList.Visible = tsbRemoveActiveLayersBulk.Visible;
         }
 
+        private void tsbCompareFullScreen_Click(object sender, EventArgs e)
+        {
+            scMain.Panel1Collapsed = true;
+            scType.Panel1Collapsed = true;
+            scItems.Panel1Collapsed = true;
+
+            tsbCompareFullScreen.Visible = false;
+            tsbRemoveFullScreen.Visible = true;
+            tsbLoadSolutions.Visible = false;
+            tssCancel.Visible = false;
+            tsbCancel.Visible = false;
+        }
+
         private void tsbLoadActiveLayers_Click(object sender, EventArgs e)
         {
             var components = componentsPicker1.SelectedComponents;
@@ -807,6 +832,18 @@ namespace MscrmTools.SolutionLayersExplorer
         private void tsbRemoveActiveLayersBulk_Click(object sender, EventArgs e)
         {
             RemoveActiveLayers(bulkRemoveList);
+        }
+
+        private void tsbRemoveFullScreen_Click(object sender, EventArgs e)
+        {
+            scMain.Panel1Collapsed = false;
+            scType.Panel1Collapsed = false;
+            scItems.Panel1Collapsed = false;
+            tsbCompareFullScreen.Visible = true;
+            tsbRemoveFullScreen.Visible = false;
+            tsbLoadSolutions.Visible = true;
+            tssCancel.Visible = true;
+            tsbCancel.Visible = true;
         }
     }
 }

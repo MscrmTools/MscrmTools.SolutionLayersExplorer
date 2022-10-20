@@ -1,6 +1,6 @@
 ﻿namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
 {
-    partial class FormControl
+    partial class GenericCustomReasonControl
     {
         /// <summary> 
         /// Variable nécessaire au concepteur.
@@ -42,14 +42,14 @@
             this.btnCompare.UseVisualStyleBackColor = true;
             this.btnCompare.Click += new System.EventHandler(this.btnCompare_Click);
             // 
-            // FormControl
+            // GenericCustomReasonControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnCompare);
-            this.Name = "FormControl";
+            this.Name = "GenericCustomReasonControl";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(969, 377);
+            this.Size = new System.Drawing.Size(969, 88);
             this.ResumeLayout(false);
 
         }

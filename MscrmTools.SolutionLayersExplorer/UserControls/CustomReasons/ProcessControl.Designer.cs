@@ -49,7 +49,7 @@
             this.Controls.Add(this.btnCompare);
             this.Name = "ProcessControl";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(969, 377);
+            this.Size = new System.Drawing.Size(969, 87);
             this.ResumeLayout(false);
 
         }

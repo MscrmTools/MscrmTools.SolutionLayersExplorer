@@ -10,10 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MscrmTools.SolutionLayersExplorer</RootNamespace>
     <AssemblyName>MscrmTools.SolutionLayersExplorer</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,6 +39,21 @@
     </Reference>
     <Reference Include="McTools.Xrm.Connection.WinForms, Version=1.2021.9.46, Culture=neutral, PublicKeyToken=f1559f79cf894e27, processorArchitecture=MSIL">
       <HintPath>..\packages\MscrmTools.Xrm.Connection.1.2021.9.46\lib\net462\McTools.Xrm.Connection.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Menees.Common, Version=5.1.1.0, Culture=neutral, PublicKeyToken=47808368f4c49fe0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Menees.Common.5.1.1\lib\netstandard2.0\Menees.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Menees.Diffs, Version=5.1.1.0, Culture=neutral, PublicKeyToken=47808368f4c49fe0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Menees.Diffs.5.1.1\lib\netstandard2.0\Menees.Diffs.dll</HintPath>
+    </Reference>
+    <Reference Include="Menees.Diffs.Windows.Forms, Version=5.1.1.0, Culture=neutral, PublicKeyToken=47808368f4c49fe0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Menees.Diffs.Windows.Forms.5.1.1\lib\net48\Menees.Diffs.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Menees.Windows, Version=5.1.1.0, Culture=neutral, PublicKeyToken=47808368f4c49fe0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Menees.Windows.5.1.1\lib\net48\Menees.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="Menees.Windows.Forms, Version=5.1.1.0, Culture=neutral, PublicKeyToken=47808368f4c49fe0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Menees.Windows.Forms.5.1.1\lib\net48\Menees.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -179,6 +195,9 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Principal.Windows.5.0.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    </Reference>
     <Reference Include="System.Text.Encodings.Web, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Text.Encodings.Web.5.0.1\lib\net461\System.Text.Encodings.Web.dll</HintPath>
     </Reference>
@@ -245,6 +264,7 @@
     <Compile Include="AppCode\Extensions.cs" />
     <Compile Include="AppCode\LayerItem.cs" />
     <Compile Include="AppCode\ListViewItemComparer.cs" />
+    <Compile Include="AppCode\Options.cs" />
     <Compile Include="MyPlugin.cs" />
     <Compile Include="MyPluginControl.cs">
       <SubType>UserControl</SubType>
@@ -265,11 +285,17 @@
     <Compile Include="UserControls\ComponentsPicker.Designer.cs">
       <DependentUpon>ComponentsPicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\CustomReasons\FormControl.cs">
+    <Compile Include="UserControls\CustomReasons\GenericCustomReasonControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\CustomReasons\FormControl.Designer.cs">
-      <DependentUpon>FormControl.cs</DependentUpon>
+    <Compile Include="UserControls\CustomReasons\GenericCustomReasonControl.Designer.cs">
+      <DependentUpon>GenericCustomReasonControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\GenericLayersComparerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\CustomReasons\GenericLayersComparerControl.Designer.cs">
+      <DependentUpon>GenericLayersComparerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserControls\CustomReasons\ProcessControl.cs">
       <SubType>UserControl</SubType>
@@ -330,8 +356,11 @@
     <EmbeddedResource Include="UserControls\ComponentsPicker.resx">
       <DependentUpon>ComponentsPicker.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControls\CustomReasons\FormControl.resx">
-      <DependentUpon>FormControl.cs</DependentUpon>
+    <EmbeddedResource Include="UserControls\CustomReasons\GenericCustomReasonControl.resx">
+      <DependentUpon>GenericCustomReasonControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\CustomReasons\GenericLayersComparerControl.resx">
+      <DependentUpon>GenericLayersComparerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\CustomReasons\ProcessControl.resx">
       <DependentUpon>ProcessControl.cs</DependentUpon>
@@ -357,6 +386,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Layers.png" />
+    <None Include="Resources\application.png" />
     <None Include="Resources\Clear_16.png" />
     <None Include="Resources\icons8-cancel.png" />
     <None Include="Resources\check-box-with-check-sign.png" />
@@ -367,11 +397,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF $(ConfigurationName) == Debug (
-      IF NOT EXIST Plugins mkdir Plugins
-      xcopy "$(TargetDir)$(TargetFileName)" "$(TargetDir)Plugins\" /Y
-      xcopy "$(TargetDir)$(TargetName).pdb" "$(TargetDir)Plugins\" /Y
-      )</PostBuildEvent>
+    <PostBuildEvent>IF NOT EXIST Plugins mkdir Plugins
+IF $(ConfigurationName) == Release "$(SolutionDir)packages\ILMerge.3.0.41\tools\net452\ILMerge.exe" /log:"$(TargetDir)ilmerge.log" /targetplatform:v4,"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.2" /lib:"C:\Windows\Microsoft.Net\Framework64\v4.0.30319" /out:"$(TargetDir)Plugins\$(TargetFileName)" "$(TargetFileName)" "$(TargetDir)Menees.Common.dll" "$(TargetDir)Menees.Diffs.dll" "$(TargetDir)Menees.Diffs.Windows.Forms.dll" "$(TargetDir)Menees.Windows.dll" "$(TargetDir)Menees.Windows.Forms.dll"
+IF $(ConfigurationName) == Debug COPY /Y "$(TargetFileName)" "$(TargetDir)Plugins"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Microsoft.Web.WebView2.1.0.1054.31\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.1054.31\build\Microsoft.Web.WebView2.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

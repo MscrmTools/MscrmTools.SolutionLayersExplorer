@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using MscrmTools.SolutionLayersExplorer.AppCode.Args;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,22 +10,31 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
 {
     public partial class RoleChangesControl : UserControl
     {
+        private readonly string _allJson;
         private readonly string _json;
-
         private readonly Dictionary<string, string> _privileges = new Dictionary<string, string>();
+        private string _roleName;
 
-        public RoleChangesControl(string json)
+        public RoleChangesControl(string json, string allJson)
         {
             InitializeComponent();
 
             _json = json;
+            _allJson = allJson;
         }
+
+        public event EventHandler<ComparisonEventArgs> ComparisonRequested;
 
         public void DisplayCustomReason()
         {
+            var allJo = JObject.Parse(_allJson);
+            _roleName = ((JArray)allJo["Attributes"]).First(a => ((JObject)a).Value<string>("Key") == "name").Value<string>("Value");
+
             if (string.IsNullOrEmpty(_json) || _json == "{}")
             {
                 lvPrivs.Items.Clear();
+                lvPrivs.Visible = false;
+                pnlNoChange.Visible = true;
                 return;
             }
 
@@ -47,6 +57,11 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
 
             lvPrivs.Items.Clear();
             lvPrivs.Items.AddRange(_privileges.Select(p => new ListViewItem(p.Key) { SubItems = { new ListViewItem.ListViewSubItem() { Text = p.Value } } }).ToArray());
+        }
+
+        private void btnCompare_Click(object sender, EventArgs e)
+        {
+            ComparisonRequested?.Invoke(this, new ComparisonEventArgs { IsSpecific = true, SpecificType = "Security Roles", SpecificValue = _roleName, Id = Guid.Empty });
         }
     }
 }

@@ -50,7 +50,6 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
                         {
                             Conditions =
                             {
-                                new ConditionExpression("msdyn_solutionname",ConditionOperator.Equal, "Active"),
                                 new ConditionExpression("msdyn_solutioncomponentname",ConditionOperator.Equal, ((ComponentType)item.Record.GetAttributeValue<OptionSetValue>("componenttype").Value).ToString()),
                                 new ConditionExpression("msdyn_componentid",ConditionOperator.Equal, item.Record.GetAttributeValue<Guid>("objectid")),
                             }
@@ -61,7 +60,7 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
                 processed++;
                 progress = (decimal)processed / items.Count * 100;
 
-                if (_bulk.Requests.Count == 500)
+                if (_bulk.Requests.Count == 200)
                 {
                     if (progress < 100 || needPrecision)
                     {
@@ -75,7 +74,9 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
                         var request = (RetrieveMultipleRequest)_bulk.Requests[response.RequestIndex];
                         var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.Last().Values.First();
 
-                        items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId).ActiveLayer = ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities.FirstOrDefault();
+                        var objectItem = items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId);
+
+                        objectItem.Layers = ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities;
                     }
 
                     _bulk.Requests.Clear();
@@ -96,7 +97,9 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
                     var request = (RetrieveMultipleRequest)_bulk.Requests[response.RequestIndex];
                     var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.Last().Values.First();
 
-                    items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId).ActiveLayer = ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities.FirstOrDefault();
+                    var item = items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId);
+
+                    item.Layers = ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities;//.FirstOrDefault();
                 }
             }
         }

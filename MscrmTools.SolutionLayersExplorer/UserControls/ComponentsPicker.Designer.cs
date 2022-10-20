@@ -29,7 +29,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.tsMain = new System.Windows.Forms.ToolStrip();
             this.tbsLoadActiveLayers = new System.Windows.Forms.ToolStripButton();
             this.tsbRemoveActiveLayer = new System.Windows.Forms.ToolStripButton();
             this.tsbCheckAll = new System.Windows.Forms.ToolStripButton();
@@ -37,27 +37,27 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             this.chType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chActiveLayers = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.toolStrip1.SuspendLayout();
+            this.tsMain.SuspendLayout();
             this.SuspendLayout();
             // 
-            // toolStrip1
+            // tsMain
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tbsLoadActiveLayers,
             this.tsbRemoveActiveLayer,
             this.tsbCheckAll});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1076, 57);
-            this.toolStrip1.TabIndex = 1;
-            this.toolStrip1.Text = "tsComponents";
+            this.tsMain.Location = new System.Drawing.Point(0, 0);
+            this.tsMain.Name = "tsMain";
+            this.tsMain.Size = new System.Drawing.Size(717, 34);
+            this.tsMain.TabIndex = 1;
+            this.tsMain.Text = "tsComponents";
             // 
             // tbsLoadActiveLayers
             // 
             this.tbsLoadActiveLayers.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.layers;
             this.tbsLoadActiveLayers.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbsLoadActiveLayers.Name = "tbsLoadActiveLayers";
-            this.tbsLoadActiveLayers.Size = new System.Drawing.Size(174, 52);
+            this.tbsLoadActiveLayers.Size = new System.Drawing.Size(174, 29);
             this.tbsLoadActiveLayers.Text = "Load Active layers";
             this.tbsLoadActiveLayers.ToolTipText = "Load Active layers for checked items";
             this.tbsLoadActiveLayers.Click += new System.EventHandler(this.tbsLoadActiveLayers_Click);
@@ -67,7 +67,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             this.tsbRemoveActiveLayer.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.layers__1_;
             this.tsbRemoveActiveLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbRemoveActiveLayer.Name = "tsbRemoveActiveLayer";
-            this.tsbRemoveActiveLayer.Size = new System.Drawing.Size(209, 52);
+            this.tsbRemoveActiveLayer.Size = new System.Drawing.Size(209, 29);
             this.tsbRemoveActiveLayer.Text = "Remove Active layer(s)";
             this.tsbRemoveActiveLayer.Click += new System.EventHandler(this.tsbRemoveActiveLayer_Click);
             // 
@@ -76,7 +76,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             this.tsbCheckAll.Image = global::MscrmTools.SolutionLayersExplorer.Properties.Resources.check_box_with_check_sign;
             this.tsbCheckAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbCheckAll.Name = "tsbCheckAll";
-            this.tsbCheckAll.Size = new System.Drawing.Size(101, 52);
+            this.tsbCheckAll.Size = new System.Drawing.Size(101, 29);
             this.tsbCheckAll.Text = "Check all";
             this.tsbCheckAll.Click += new System.EventHandler(this.tsbCheckAll_Click);
             // 
@@ -90,10 +90,10 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             this.lvComponents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvComponents.FullRowSelect = true;
             this.lvComponents.HideSelection = false;
-            this.lvComponents.Location = new System.Drawing.Point(0, 86);
+            this.lvComponents.Location = new System.Drawing.Point(0, 34);
             this.lvComponents.MultiSelect = false;
             this.lvComponents.Name = "lvComponents";
-            this.lvComponents.Size = new System.Drawing.Size(1076, 1353);
+            this.lvComponents.Size = new System.Drawing.Size(717, 925);
             this.lvComponents.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lvComponents.TabIndex = 2;
             this.lvComponents.UseCompatibleStateImageBehavior = false;
@@ -122,18 +122,18 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.lvComponents);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.tsMain);
             this.Name = "ComponentsPicker";
             this.Size = new System.Drawing.Size(717, 959);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.tsMain.ResumeLayout(false);
+            this.tsMain.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStrip tsMain;
         private System.Windows.Forms.ListView lvComponents;
         private System.Windows.Forms.ColumnHeader chType;
         private System.Windows.Forms.ColumnHeader chCount;

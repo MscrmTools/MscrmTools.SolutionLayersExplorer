@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.btnCompare = new System.Windows.Forms.Button();
             this.lvPrivs = new System.Windows.Forms.ListView();
             this.chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chDepth = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -35,6 +36,17 @@
             this.label1 = new System.Windows.Forms.Label();
             this.pnlNoChange.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // btnCompare
+            // 
+            this.btnCompare.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnCompare.Location = new System.Drawing.Point(0, 0);
+            this.btnCompare.Name = "btnCompare";
+            this.btnCompare.Size = new System.Drawing.Size(986, 61);
+            this.btnCompare.TabIndex = 2;
+            this.btnCompare.Text = "Compare with another environment";
+            this.btnCompare.UseVisualStyleBackColor = true;
+            this.btnCompare.Click += new System.EventHandler(this.btnCompare_Click);
             // 
             // lvPrivs
             // 
@@ -44,10 +56,10 @@
             this.lvPrivs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvPrivs.FullRowSelect = true;
             this.lvPrivs.HideSelection = false;
-            this.lvPrivs.Location = new System.Drawing.Point(0, 0);
+            this.lvPrivs.Location = new System.Drawing.Point(0, 61);
             this.lvPrivs.Name = "lvPrivs";
-            this.lvPrivs.Size = new System.Drawing.Size(891, 372);
-            this.lvPrivs.TabIndex = 0;
+            this.lvPrivs.Size = new System.Drawing.Size(986, 251);
+            this.lvPrivs.TabIndex = 3;
             this.lvPrivs.UseCompatibleStateImageBehavior = false;
             this.lvPrivs.View = System.Windows.Forms.View.Details;
             // 
@@ -65,19 +77,19 @@
             // 
             this.pnlNoChange.Controls.Add(this.label1);
             this.pnlNoChange.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlNoChange.Location = new System.Drawing.Point(0, 0);
+            this.pnlNoChange.Location = new System.Drawing.Point(0, 61);
             this.pnlNoChange.Name = "pnlNoChange";
-            this.pnlNoChange.Size = new System.Drawing.Size(891, 372);
-            this.pnlNoChange.TabIndex = 1;
+            this.pnlNoChange.Size = new System.Drawing.Size(986, 251);
+            this.pnlNoChange.TabIndex = 4;
             this.pnlNoChange.Visible = false;
             // 
             // label1
             // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(891, 111);
-            this.label1.TabIndex = 0;
+            this.label1.Size = new System.Drawing.Size(986, 251);
+            this.label1.TabIndex = 1;
             this.label1.Text = "No changes for privileges found";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -87,8 +99,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pnlNoChange);
             this.Controls.Add(this.lvPrivs);
+            this.Controls.Add(this.btnCompare);
             this.Name = "RoleChangesControl";
-            this.Size = new System.Drawing.Size(891, 372);
+            this.Size = new System.Drawing.Size(986, 312);
             this.pnlNoChange.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -96,6 +109,7 @@
 
         #endregion
 
+        private System.Windows.Forms.Button btnCompare;
         private System.Windows.Forms.ListView lvPrivs;
         private System.Windows.Forms.ColumnHeader chName;
         private System.Windows.Forms.ColumnHeader chDepth;

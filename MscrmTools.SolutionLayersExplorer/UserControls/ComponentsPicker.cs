@@ -39,7 +39,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             foreach (var item in lvComponents.Items.Cast<ListViewItem>())
             {
                 if (item.SubItems.Count > 2 && item.SubItems[2].Text == "...")
-                    item.SubItems[2].Text = ((List<LayerItem>)item.Tag).Count(i => i.ActiveLayer != null).ToString();
+                    item.SubItems[2].Text = ((List<LayerItem>)item.Tag).Where(i => i.Layers.Any(l => l.GetAttributeValue<string>("msdyn_solutionname") == "Active")).Count().ToString();
             }
         }
 

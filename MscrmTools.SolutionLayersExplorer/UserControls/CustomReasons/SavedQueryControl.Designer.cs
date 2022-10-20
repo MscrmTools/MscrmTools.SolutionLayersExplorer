@@ -62,7 +62,7 @@
             this.Controls.Add(this.btnCompare);
             this.Name = "SavedQueryControl";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(969, 377);
+            this.Size = new System.Drawing.Size(969, 155);
             this.ResumeLayout(false);
 
         }

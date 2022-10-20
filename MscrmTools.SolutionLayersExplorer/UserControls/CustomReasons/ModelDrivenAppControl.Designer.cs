@@ -49,7 +49,7 @@
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(10, 78);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(949, 289);
+            this.label1.Size = new System.Drawing.Size(949, 105);
             this.label1.TabIndex = 3;
             this.label1.Text = resources.GetString("label1.Text");
             // 
@@ -61,7 +61,7 @@
             this.Controls.Add(this.btnCompare);
             this.Name = "ModelDrivenAppControl";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(969, 377);
+            this.Size = new System.Drawing.Size(969, 193);
             this.ResumeLayout(false);
 
         }
