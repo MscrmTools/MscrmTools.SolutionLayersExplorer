@@ -42,19 +42,23 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
 
         public void LoadSolutions()
         {
-            var solutions = Service.RetrieveMultiple(new QueryExpression("solution")
+            var query = new QueryExpression("solution")
             {
                 NoLock = true,
-                ColumnSet = new ColumnSet("uniquename", "friendlyname", "version"),
-                Criteria = new FilterExpression
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression("ismanaged", ConditionOperator.Equal, true),
-                        new ConditionExpression("isvisible", ConditionOperator.Equal, true)
-                    }
-                }
-            }).Entities;
+                ColumnSet = new ColumnSet("uniquename", "friendlyname", "version")
+            };
+
+            if (!chkLoadAll.Checked)
+            {
+                query.Criteria.AddCondition("ismanaged", ConditionOperator.Equal, true);
+            }
+
+            if (!chkShowHidden.Checked)
+            {
+                query.Criteria.AddCondition("isvisible", ConditionOperator.Equal, true);
+            }
+
+            var solutions = Service.RetrieveMultiple(query).Entities;
 
             _entities = solutions.ToList();
         }

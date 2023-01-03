@@ -44,7 +44,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             foreach (var item in lvComponents.Items.Cast<ListViewItem>())
             {
                 if (item.SubItems.Count > 2 && item.SubItems[2].Text == "...")
-                    item.SubItems[2].Text = ((List<LayerItem>)item.Tag).Where(i => i.Layers.Any(l => l.GetAttributeValue<string>("msdyn_solutionname") == "Active")).Count().ToString();
+                    item.SubItems[2].Text = ((List<LayerItem>)item.Tag).Count(i => (i.Layers?.Count() ?? 0) > 1 && (i.Layers?.Any(l => l.GetAttributeValue<string>("msdyn_solutionname") == "Active") ?? false)).ToString();
             }
         }
 
@@ -169,10 +169,20 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
                 }).ToArray());
 
                 // Relations
-                _components.AddRange(emds.SelectMany(e => e.Attributes).Select(e => new Entity("solutioncomponent")
+                _components.AddRange(emds.SelectMany(e => e.ManyToManyRelationships).Select(e => new Entity("solutioncomponent")
                 {
                     ["objectid"] = e.MetadataId,
-                    ["componenttype"] = new OptionSetValue(10),
+                    ["componenttype"] = new OptionSetValue(3),
+                }).ToArray());
+                _components.AddRange(emds.SelectMany(e => e.OneToManyRelationships).Select(e => new Entity("solutioncomponent")
+                {
+                    ["objectid"] = e.MetadataId,
+                    ["componenttype"] = new OptionSetValue(3),
+                }).ToArray());
+                _components.AddRange(emds.SelectMany(e => e.ManyToManyRelationships).Select(e => new Entity("solutioncomponent")
+                {
+                    ["objectid"] = e.MetadataId,
+                    ["componenttype"] = new OptionSetValue(3),
                 }).ToArray());
 
                 // Formulaires

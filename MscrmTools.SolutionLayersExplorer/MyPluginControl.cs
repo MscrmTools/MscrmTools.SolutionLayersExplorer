@@ -146,7 +146,7 @@ namespace MscrmTools.SolutionLayersExplorer
                 || components.First().Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 26 // Saved query
                 || components.First().Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 59 // Saved query visualization
                 )
-                && components.Any(c => c.ActiveLayer != null))
+                && components.Any(c => c.Layers?.Count > 1 && c.ActiveLayer != null))
             {
                 lvItems.Columns.Add(new ColumnHeader
                 {
@@ -154,7 +154,7 @@ namespace MscrmTools.SolutionLayersExplorer
                     Width = 120
                 });
 
-                foreach (var component in components.Where(c => c.ActiveLayer != null))
+                foreach (var component in components.Where(c => c.ActiveLayer != null && c.Layers.Count > 1))
                 {
                     if (component.Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 2)
                     {
@@ -210,7 +210,7 @@ namespace MscrmTools.SolutionLayersExplorer
                                 PostWorkCallBack = evt =>
                                 {
                                     lvItems.Items.AddRange(components
-                                     .Where(c => c.ActiveLayer != null)
+                                     .Where(c => c.Layers?.Count > 1 && c.ActiveLayer != null)
                                      .Select(i => new ListViewItem(i.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
                                      {
                                          SubItems = {
@@ -228,7 +228,7 @@ namespace MscrmTools.SolutionLayersExplorer
                     }
                     else
                     {
-                        foreach (var component in components.Where(c => c.ActiveLayer != null))
+                        foreach (var component in components.Where(c => c.Layers?.Count > 1 && c.ActiveLayer != null))
                         {
                             var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
                             {
@@ -270,14 +270,14 @@ namespace MscrmTools.SolutionLayersExplorer
                         {
                             var forms = (List<Entity>)evt.Result;
 
-                            foreach (var component in components.Where(c => c.ActiveLayer != null))
+                            foreach (var component in components.Where(c => c.Layers?.Count > 1 && c.ActiveLayer != null))
                             {
                                 var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
                                 {
                                     SubItems = {
                                             new ListViewItem.ListViewSubItem
                                             {
-                                                Text = forms.First(f => f.Id == component.Record.GetAttributeValue<Guid>("objectid")).GetAttributeValue<string>("objecttypecode")
+                                                Text = forms.FirstOrDefault(f => f.Id == component.Record.GetAttributeValue < Guid >("objectid"))?.GetAttributeValue < string >("objecttypecode") ?? "N/A/"
                                             }
                                        },
                                     Tag = component
@@ -313,14 +313,14 @@ namespace MscrmTools.SolutionLayersExplorer
                         {
                             var views = (List<Entity>)evt.Result;
 
-                            foreach (var component in components.Where(c => c.ActiveLayer != null))
+                            foreach (var component in components.Where(c => c.Layers?.Count > 1 && c.ActiveLayer != null))
                             {
                                 var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
                                 {
                                     SubItems = {
                                             new ListViewItem.ListViewSubItem
                                             {
-                                                Text = views.First(f => f.Id == component.Record.GetAttributeValue<Guid>("objectid")).GetAttributeValue<string>("returnedtypecode")
+                                                Text = views.FirstOrDefault(f => f.Id == component.Record.GetAttributeValue<Guid>("objectid"))?.GetAttributeValue<string>("returnedtypecode") ?? "N/A"
                                             }
                                        },
                                     Tag = component
@@ -356,14 +356,14 @@ namespace MscrmTools.SolutionLayersExplorer
                         {
                             var visualizations = (List<Entity>)evt.Result;
 
-                            foreach (var component in components.Where(c => c.ActiveLayer != null))
+                            foreach (var component in components.Where(c => c.Layers?.Count > 1 && c.ActiveLayer != null))
                             {
                                 var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
                                 {
                                     SubItems = {
                                             new ListViewItem.ListViewSubItem
                                             {
-                                                Text = visualizations.First(f => f.Id == component.Record.GetAttributeValue<Guid>("objectid")).GetAttributeValue<string>("primaryentitytypecode")
+                                                Text = visualizations.FirstOrDefault(f => f.Id == component.Record.GetAttributeValue<Guid>("objectid"))?.GetAttributeValue<string>("primaryentitytypecode") ?? "N/A"
                                             }
                                        },
                                     Tag = component
@@ -380,7 +380,7 @@ namespace MscrmTools.SolutionLayersExplorer
                 return;
             }
 
-            foreach (var component in components.Where(c => c.ActiveLayer != null))
+            foreach (var component in components.Where(c => c.Layers?.Count > 1 && c.ActiveLayer != null))
             {
                 var lvi = new ListViewItem(component.ActiveLayer.GetAttributeValue<string>("msdyn_name")) { Tag = component };
                 component.ListViewItem = lvi;
