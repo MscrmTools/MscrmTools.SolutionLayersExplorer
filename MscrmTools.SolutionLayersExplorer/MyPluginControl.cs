@@ -155,9 +155,6 @@ namespace MscrmTools.SolutionLayersExplorer
 
                         bw.ReportProgress(0, $"Loading layers for {component.Text}...");
 
-                        //var als = new ActiveLayerSearch((CrmServiceClient)Service);
-                        //als.GetActiveLayers(items, bw, component.Text);
-
                         // TODO: File Path
                         string path = "C:\\Users\\Gabriel.Junckes\\Source\\Repos\\MscrmTools.SolutionLayersExplorer\\MscrmTools.SolutionLayersExplorer\\bin\\Debug\\text.xlsx";
 

@@ -1,22 +1,13 @@
-﻿using McTools.Xrm.Connection;
-using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Deployment;
+﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Metadata.Query;
-using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
-using Microsoft.Xrm.Sdk;
+using MscrmTools.SolutionLayersExplorer.AppCode;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using MscrmTools.SolutionLayersExplorer.AppCode;
-using System.Web.Services.Description;
 
 namespace MscrmTools.SolutionLayersExplorer
 {
@@ -43,21 +34,39 @@ namespace MscrmTools.SolutionLayersExplorer
 
             if (worker != null && worker.WorkerReportsProgress)
             {
-                worker.ReportProgress(0, "Exporting entities translations...");
+                worker.ReportProgress(0, "Exporting components layers...");
             }
 
             ExcelWorksheet sheet = file.Workbook.Worksheets.Add("Layers");
-            //var et = new EntityTranslation();
-            //et.Export(emds, lcids, sheet, settings);
-            //StyleMutator.FontDefaults(sheet);
 
-            int line = 1;
+            int line = 1; 
+            int cell = 0;
+
+            // Header
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Component Layer Id";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Component Id";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Solution Component Name";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "SolutionLayerName";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "SolutionVersion";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "PublisherName";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "OverWriteTime";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Order";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Name";
+            line++;
 
             foreach (LayerExcelRow row in layers)
             {
-                int cell = 0;
+                cell = 0;
 
+                ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.ComponentLayerId.ToString();
+                ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.ComponentId.ToString();
+                ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.SolutionComponentName;
                 ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.SolutionLayerName;
+                ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.SolutionVersion;
+                ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.PublisherName;
+                ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.OverWriteTime.ToShortTimeString();
+                ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.Order;
+                ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.Name;
 
                 line++;
             }
@@ -152,8 +161,15 @@ namespace MscrmTools.SolutionLayersExplorer
                     {
                         layers.Add(new LayerExcelRow
                         {
+                            ComponentLayerId = layer.GetAttributeValue<Guid>("msdyn_componentlayerid"),
+                            ComponentId = layer.GetAttributeValue<Guid>("msdyn_componentid"),
                             SolutionComponentName = layer.GetAttributeValue<string>("msdyn_solutioncomponentname"),
                             SolutionLayerName = layer.GetAttributeValue<string>("msdyn_solutionname"),
+                            SolutionVersion = layer.GetAttributeValue<string>("msdyn_solutionversion"),
+                            PublisherName = layer.GetAttributeValue<string>("msdyn_publishername"),
+                            OverWriteTime = layer.GetAttributeValue<DateTime>("msdyn_overwritetime"),
+                            Order = layer.GetAttributeValue<int>("msdyn_order"),
+                            Name = layer.GetAttributeValue<string>("msdyn_name")
                         }); ;
                     }
                 }
@@ -168,5 +184,10 @@ namespace MscrmTools.SolutionLayersExplorer
         public string SolutionComponentName { get; set; }
         public string SolutionLayerName { get; set; }        
         public string SolutionVersion { get; set; }
+        public string PublisherName { get; set; }
+        public DateTime OverWriteTime { get; set; }
+        public int Order { get; set; }
+        public string Name { get; set; }
+
     }
 }
