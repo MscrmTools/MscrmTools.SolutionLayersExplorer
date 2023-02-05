@@ -50,15 +50,6 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             }
         }
 
-        public void ExportLayersToExcel()
-        {
-            foreach (var item in lvComponents.Items.Cast<ListViewItem>())
-            {
-                if (item.SubItems.Count > 2 && item.SubItems[2].Text == "...")
-                    item.SubItems[2].Text = ((List<LayerItem>)item.Tag).Where(i => i.Layers.Any(l => l.GetAttributeValue<string>("msdyn_solutionname") == "Active")).Count().ToString();
-            }
-        }
-
         public void DisplayComponents(List<Tuple<int, string>> componentsDefs)
         {
             lvComponents.Items.Clear();

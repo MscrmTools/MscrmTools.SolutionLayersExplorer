@@ -149,13 +149,21 @@ namespace MscrmTools.SolutionLayersExplorer
                     {
                         if (bw.CancellationPending) return;
 
-                        var items = component.Tag as List<LayerItem>;
+                        List<LayerItem> items = component.Tag as List<LayerItem>;
+
                         if (items == null) continue;
 
                         bw.ReportProgress(0, $"Loading layers for {component.Text}...");
 
-                        var als = new ActiveLayerSearch((CrmServiceClient)Service);
-                        als.GetActiveLayers(items, bw, component.Text);
+                        //var als = new ActiveLayerSearch((CrmServiceClient)Service);
+                        //als.GetActiveLayers(items, bw, component.Text);
+
+                        // TODO: File Path
+                        string path = "C:\\Users\\Gabriel.Junckes\\Source\\Repos\\MscrmTools.SolutionLayersExplorer\\MscrmTools.SolutionLayersExplorer\\bin\\Debug\\text.xlsx";
+
+                        var exportToExcel = new ExportToExcel(Service, path);
+                        exportToExcel.GetLayers(items, component.Text, bw);
+                        exportToExcel.Export(bw);
                     }
                 },
                 PostWorkCallBack = (evt) =>
@@ -168,22 +176,7 @@ namespace MscrmTools.SolutionLayersExplorer
                         return;
                     }
 
-                    var file = new ExcelPackage();
-
-                    // TODO: File Path
-                    file.File = new FileInfo("C:/");
-
-                    
-                    var sheet = file.Workbook.Worksheets.Add("Entities");
-                    int line = 1;
-                    int cell = 0;
-
-                    ZeroBasedSheet.Cell(sheet, line, cell++).Value = "DisplayCollectionName";
-
-
-                    file.Save();
-
-                    componentsPicker1.ExportLayersToExcel();
+                    // TODO: Success componentsPicker1.ExportLayersToExcel();
                     componentsPicker1.UncheckAll();
 
                     ComponentsPicker1_OnSelected(null, new EventArgs());
