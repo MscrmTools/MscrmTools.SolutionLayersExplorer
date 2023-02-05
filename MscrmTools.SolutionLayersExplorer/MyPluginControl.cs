@@ -10,6 +10,9 @@ using MscrmTools.SolutionLayersExplorer.UserControls;
 using MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NuGet.Configuration;
+using NuGet.Packaging.Signing;
+using OfficeOpenXml;
 using ScintillaNET;
 using System;
 using System.Collections.Generic;
@@ -17,9 +20,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Windows.Forms;
+using System.Windows.Shapes;
 using XrmToolBox.Extensibility;
 using XrmToolBox.Extensibility.Interfaces;
+using static System.Windows.Forms.LinkLabel;
 
 namespace MscrmTools.SolutionLayersExplorer
 {
@@ -114,6 +120,79 @@ namespace MscrmTools.SolutionLayersExplorer
         private void ComponentsPicker1_OnActiveLayerRequested(object sender, EventArgs e)
         {
             tsbLoadActiveLayers_Click(sender, e);
+        }
+
+        private void ComponentsPicker1_OnExportToExcelRequested(object sender, EventArgs e)
+        {
+            var components = componentsPicker1.SelectedComponents;
+            if (components.Count == 0) return;
+
+            //foreach (var component in components)
+            //{
+            //    if (component.SubItems.Count < 3)
+            //        component.SubItems.Add(new ListViewItem.ListViewSubItem());
+
+            //    component.SubItems[2].Text = "...";
+            //}
+
+            SetRunningStatus(true);
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Loading active layers...",
+                IsCancelable = true,
+                Work = (bw, evt) =>
+                {
+                    currentBw = bw;
+
+                    foreach (var component in components)
+                    {
+                        if (bw.CancellationPending) return;
+
+                        var items = component.Tag as List<LayerItem>;
+                        if (items == null) continue;
+
+                        bw.ReportProgress(0, $"Loading layers for {component.Text}...");
+
+                        var als = new ActiveLayerSearch((CrmServiceClient)Service);
+                        als.GetActiveLayers(items, bw, component.Text);
+                    }
+                },
+                PostWorkCallBack = (evt) =>
+                {
+                    SetRunningStatus(false);
+
+                    if (evt.Error != null)
+                    {
+                        MessageBox.Show(this, $"Error when loading components: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    var file = new ExcelPackage();
+
+                    // TODO: File Path
+                    file.File = new FileInfo("C:/");
+
+                    
+                    var sheet = file.Workbook.Worksheets.Add("Entities");
+                    int line = 1;
+                    int cell = 0;
+
+                    ZeroBasedSheet.Cell(sheet, line, cell++).Value = "DisplayCollectionName";
+
+
+                    file.Save();
+
+                    componentsPicker1.ExportLayersToExcel();
+                    componentsPicker1.UncheckAll();
+
+                    ComponentsPicker1_OnSelected(null, new EventArgs());
+                },
+                ProgressChanged = evt =>
+                {
+                    SetWorkingMessage(evt.UserState.ToString());
+                }
+            });
         }
 
         private void ComponentsPicker1_OnSelected(object sender, EventArgs e)
