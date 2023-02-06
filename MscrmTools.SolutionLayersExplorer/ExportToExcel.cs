@@ -48,10 +48,10 @@ namespace MscrmTools.SolutionLayersExplorer
             ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Component Layer Id";
             ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Component Id";
             ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Solution Component Name";
-            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "SolutionLayerName";
-            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "SolutionVersion";
-            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "PublisherName";
-            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "OverWriteTime";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Solution Layer Name";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Solution Version";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Publisher Name";
+            ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Overwrite Time";
             ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Order";
             ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Name";
             line++;
