@@ -124,65 +124,71 @@ namespace MscrmTools.SolutionLayersExplorer
 
         private void ComponentsPicker1_OnExportToExcelRequested(object sender, EventArgs e)
         {
-            var components = componentsPicker1.SelectedComponents;
-            if (components.Count == 0) return;
-
-            //foreach (var component in components)
-            //{
-            //    if (component.SubItems.Count < 3)
-            //        component.SubItems.Add(new ListViewItem.ListViewSubItem());
-
-            //    component.SubItems[2].Text = "...";
-            //}
-
-            SetRunningStatus(true);
-
-            WorkAsync(new WorkAsyncInfo
+            var selectedComponents = componentsPicker1.SelectedComponents;
+            if (selectedComponents.Count == 0)
             {
-                Message = "Loading active layers...",
-                IsCancelable = true,
-                Work = (bw, evt) =>
-                {
-                    currentBw = bw;
+                MessageBox.Show(this, "Select the components first!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
-                    foreach (var component in components)
+            using (var sfd = new SaveFileDialog { Filter = "Excel workbook|*.xlsx", Title = "Select file destination" })
+            {
+                if (sfd.ShowDialog(this) == DialogResult.OK)
+                {
+                    SetRunningStatus(true);
+
+                    WorkAsync(new WorkAsyncInfo
                     {
-                        if (bw.CancellationPending) return;
+                        Message = "Loading layers...",
+                        IsCancelable = true,
+                        Work = (bw, evt) =>
+                        {
+                            currentBw = bw;
+                            ExportToExcel exportToExcel = new ExportToExcel(Service, sfd.FileName);
+                            List<string> components = selectedComponents.Select(a => a.Text).ToList();
 
-                        List<LayerItem> items = component.Tag as List<LayerItem>;
+                            foreach (var component in selectedComponents)
+                            {
+                                if (bw.CancellationPending) return;
 
-                        if (items == null) continue;
+                                List<LayerItem> items = component.Tag as List<LayerItem>;
 
-                        bw.ReportProgress(0, $"Loading layers for {component.Text}...");
+                                if (items == null) continue;
 
-                        // TODO: File Path
-                        string path = "C:\\Users\\Gabriel.Junckes\\Source\\Repos\\MscrmTools.SolutionLayersExplorer\\MscrmTools.SolutionLayersExplorer\\bin\\Debug\\text.xlsx";
+                                List<Guid> componentIds = items.Select(i => i.Record.GetAttributeValue<Guid>("objectid")).ToList();
+                                ComponentType componentType = (ComponentType)items[0].Record.GetAttributeValue<OptionSetValue>("componenttype").Value;
 
-                        var exportToExcel = new ExportToExcel(Service, path);
-                        exportToExcel.GetLayers(items, component.Text, bw);
-                        exportToExcel.Export(bw);
-                    }
-                },
-                PostWorkCallBack = (evt) =>
-                {
-                    SetRunningStatus(false);
+                                bw.ReportProgress(0, $"Loading layers for {component.Text}...");
 
-                    if (evt.Error != null)
-                    {
-                        MessageBox.Show(this, $"Error when loading components: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
+                                exportToExcel.GetLayers(componentIds, componentType, $"Getting layers from {component.Text}", bw);
+                            }
 
-                    // TODO: Success componentsPicker1.ExportLayersToExcel();
-                    componentsPicker1.UncheckAll();
+                            exportToExcel.Export(bw);
+                        },
+                        PostWorkCallBack = (evt) =>
+                        {
+                            SetRunningStatus(false);
 
-                    ComponentsPicker1_OnSelected(null, new EventArgs());
-                },
-                ProgressChanged = evt =>
-                {
-                    SetWorkingMessage(evt.UserState.ToString());
+                            if (evt.Error != null)
+                            {
+                                MessageBox.Show(this, $"Error when loading components: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+                            else
+                            {
+                                componentsPicker1.UncheckAll();
+                                ComponentsPicker1_OnSelected(null, new EventArgs());
+                                
+                                MessageBox.Show(this, "Completed!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                        },
+                        ProgressChanged = evt =>
+                        {
+                            SetWorkingMessage(evt.UserState.ToString());
+                        }
+                    });
                 }
-            });
+            }
         }
 
         private void ComponentsPicker1_OnSelected(object sender, EventArgs e)

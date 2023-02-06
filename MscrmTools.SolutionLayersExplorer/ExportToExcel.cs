@@ -1,25 +1,26 @@
-﻿using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
+﻿using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
-using MscrmTools.SolutionLayersExplorer.AppCode;
+using Microsoft.Xrm.Sdk;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using MscrmTools.SolutionLayersExplorer.AppCode;
 
 namespace MscrmTools.SolutionLayersExplorer
 {
     public class ExportToExcel
     {
-        private List<LayerExcelRow> layers;
+        private readonly List<LayerExcelRow> _layers;
 
         public ExportToExcel(IOrganizationService service, string filePath)
         {
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
             Service = service;
             FilePath = filePath;
+            _layers = new List<LayerExcelRow>();
         }
 
         public IOrganizationService Service { get; }
@@ -39,7 +40,7 @@ namespace MscrmTools.SolutionLayersExplorer
 
             ExcelWorksheet sheet = file.Workbook.Worksheets.Add("Layers");
 
-            int line = 1; 
+            int line = 0;
             int cell = 0;
 
             // Header
@@ -54,7 +55,7 @@ namespace MscrmTools.SolutionLayersExplorer
             ZeroBasedSheet.Cell(sheet, line, cell++).Value = "Name";
             line++;
 
-            foreach (LayerExcelRow row in layers)
+            foreach (LayerExcelRow row in _layers)
             {
                 cell = 0;
 
@@ -64,7 +65,7 @@ namespace MscrmTools.SolutionLayersExplorer
                 ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.SolutionLayerName;
                 ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.SolutionVersion;
                 ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.PublisherName;
-                ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.OverWriteTime.ToShortTimeString();
+                ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.OverWriteTime.ToString("u");
                 ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.Order;
                 ZeroBasedSheet.Cell(sheet, line, cell++).Value = row.Name;
 
@@ -74,92 +75,35 @@ namespace MscrmTools.SolutionLayersExplorer
             file.Save();
         }
 
-        public void GetLayers(List<LayerItem> items, string componentType, BackgroundWorker bw)
+        public void GetLayers(List<Guid> componentIds, ComponentType componentType, string progressMessage, BackgroundWorker bw)
         {
-            ExecuteMultipleRequest bulkRequest = new ExecuteMultipleRequest
+            var requests = componentIds.Select(i => new RetrieveMultipleRequest
             {
-                Requests = new OrganizationRequestCollection(),
-                Settings = new ExecuteMultipleSettings
+                Query = new QueryExpression("msdyn_componentlayer")
                 {
-                    ContinueOnError = true,
-                    ReturnResponses = true
-                }
-            };
-
-            decimal progress = 0;
-            int processed = 0;
-            bool needPrecision = false;
-            layers = new List<LayerExcelRow>();
-
-            foreach (var item in items)
-            {
-                if (bw.CancellationPending) return;
-
-                bulkRequest.Requests.Add(new RetrieveMultipleRequest
-                {
-                    Query = new QueryExpression("msdyn_componentlayer")
+                    NoLock = true,
+                    ColumnSet = new ColumnSet(true),
+                    Criteria = new FilterExpression
                     {
-                        NoLock = true,
-                        ColumnSet = new ColumnSet(true),
-                        Criteria = new FilterExpression
-                        {
-                            Conditions =
+                        Conditions =
                             {
-                                new ConditionExpression("msdyn_solutioncomponentname",ConditionOperator.Equal, ((ComponentType)item.Record.GetAttributeValue<OptionSetValue>("componenttype").Value).ToString()),
-                                new ConditionExpression("msdyn_componentid",ConditionOperator.Equal, item.Record.GetAttributeValue<Guid>("objectid")),
+                                new ConditionExpression("msdyn_solutioncomponentname",ConditionOperator.Equal, componentType.ToString()),
+                                new ConditionExpression("msdyn_componentid",ConditionOperator.Equal, i)
                             }
-                        }
                     }
-                });
-
-                processed++;
-                progress = (decimal)processed / items.Count * 100;
-
-                if (bulkRequest.Requests.Count == 200)
-                {
-                    if (progress < 100 || needPrecision)
-                    {
-                        bw.ReportProgress(Convert.ToInt32(progress), $"Loading active layers for {componentType} ({Convert.ToInt32(progress)}%)...");
-                        needPrecision = true;
-                    }
-
-                    var bulkResp = (ExecuteMultipleResponse)Service.Execute(bulkRequest);
-
-                    foreach (var response in bulkResp.Responses)
-                    {
-                        var request = (RetrieveMultipleRequest)bulkRequest.Requests[response.RequestIndex];
-                        var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.Last().Values.First();
-
-                        var objectItem = items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId);
-
-                        objectItem.Layers = ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities;
-                    }
-
-                    bulkRequest.Requests.Clear();
                 }
-            }
+            }).ToList();
+            var bulkResponse = Execute(requests, progressMessage, bw);
 
-            if (bulkRequest.Requests.Count > 0)
+            foreach (ExecuteMultipleResponseItem response in bulkResponse)
             {
-                if (progress < 100 || needPrecision)
+                if (response.Response != null)
                 {
-                    bw.ReportProgress(Convert.ToInt32(progress), $"Loading active layers for {componentType} ({Convert.ToInt32(progress)}%)...");
-                    needPrecision = true;
-                }
-
-                var bulkResp = (ExecuteMultipleResponse)Service.Execute(bulkRequest);
-
-                foreach (var response in bulkResp.Responses)
-                {
-                    var request = (RetrieveMultipleRequest)bulkRequest.Requests[response.RequestIndex];
-                    var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.Last().Values.First();
-
-                    var item = items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId);
                     var layerList = ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities;
 
                     foreach (Entity layer in layerList)
                     {
-                        layers.Add(new LayerExcelRow
+                        _layers.Add(new LayerExcelRow
                         {
                             ComponentLayerId = layer.GetAttributeValue<Guid>("msdyn_componentlayerid"),
                             ComponentId = layer.GetAttributeValue<Guid>("msdyn_componentid"),
@@ -170,10 +114,67 @@ namespace MscrmTools.SolutionLayersExplorer
                             OverWriteTime = layer.GetAttributeValue<DateTime>("msdyn_overwritetime"),
                             Order = layer.GetAttributeValue<int>("msdyn_order"),
                             Name = layer.GetAttributeValue<string>("msdyn_name")
-                        }); ;
+                        });
                     }
                 }
+                else if (response.Fault != null)
+                {
+                    var request = (OrganizationRequest)requests[response.RequestIndex];
+
+                    _layers.Add(new LayerExcelRow
+                    {
+                        ComponentLayerId = Guid.Empty,
+                        ComponentId = Guid.Empty,
+                        SolutionComponentName = request.RequestName,
+                        SolutionLayerName = string.Empty,
+                        SolutionVersion = string.Empty,
+                        PublisherName = string.Empty,
+                        OverWriteTime = DateTime.UtcNow,
+                        Order = 0,
+                        Name = response.Fault.Message
+                    });
+                }
             }
+
+            bw.ReportProgress(100, $"{progressMessage}: Done");
+        }
+
+        private List<ExecuteMultipleResponseItem> Execute(List<RetrieveMultipleRequest> executeMultipleRequests, string progressMessage, BackgroundWorker bw)
+        {
+            int batchSize = 750;
+            int batchCount = 0;
+            int batchNumbers = Convert.ToInt32(decimal.Round(executeMultipleRequests.Count / batchSize, 0, MidpointRounding.AwayFromZero));
+
+            ExecuteMultipleRequest bulkRequest = new ExecuteMultipleRequest
+            {
+                Requests = new OrganizationRequestCollection(),
+                Settings = new ExecuteMultipleSettings
+                {
+                    ContinueOnError = true,
+                    ReturnResponses = true
+                }
+            };
+
+            List<ExecuteMultipleResponseItem> bulkResponse = new List<ExecuteMultipleResponseItem>();
+            List<RetrieveMultipleRequest> batch = executeMultipleRequests.Take(batchSize).ToList();
+
+            do
+            {
+                if (bw.CancellationPending) return bulkResponse;
+
+                bw.ReportProgress(0, $@"{progressMessage} ({batchCount + 1}/{batchNumbers})...");
+
+                bulkRequest.Requests.Clear();
+                bulkRequest.Requests.AddRange(batch);
+
+                var responses = ((ExecuteMultipleResponse)Service.Execute(bulkRequest)).Responses;
+                bulkResponse.AddRange(responses);
+
+                batch = executeMultipleRequests.Skip(++batchCount * batchSize).Take(batchSize).ToList();
+            }
+            while (batch.Count > 0);
+
+            return bulkResponse;
         }
     }
 
@@ -182,7 +183,7 @@ namespace MscrmTools.SolutionLayersExplorer
         public Guid ComponentLayerId { get; set; }
         public Guid ComponentId { get; set; }
         public string SolutionComponentName { get; set; }
-        public string SolutionLayerName { get; set; }        
+        public string SolutionLayerName { get; set; }
         public string SolutionVersion { get; set; }
         public string PublisherName { get; set; }
         public DateTime OverWriteTime { get; set; }
