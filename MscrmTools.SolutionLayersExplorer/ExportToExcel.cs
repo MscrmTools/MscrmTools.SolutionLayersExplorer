@@ -1,13 +1,13 @@
-﻿using Microsoft.Xrm.Sdk.Messages;
+﻿using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
-using Microsoft.Xrm.Sdk;
+using MscrmTools.SolutionLayersExplorer.AppCode;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using MscrmTools.SolutionLayersExplorer.AppCode;
 
 namespace MscrmTools.SolutionLayersExplorer
 {
