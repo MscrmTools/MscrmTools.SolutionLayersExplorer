@@ -28,6 +28,8 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
 
         public event EventHandler OnActiveLayerRequested;
 
+        public event EventHandler OnExportToExcelRequested;
+
         public event EventHandler OnSelected;
 
         public List<LayerItem> SelectedComponent => lvComponents.SelectedItems.Cast<ListViewItem>().FirstOrDefault()?.Tag as List<LayerItem>;
@@ -269,6 +271,11 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
         private void tbsLoadActiveLayers_Click(object sender, EventArgs e)
         {
             OnActiveLayerRequested?.Invoke(this, new EventArgs());
+        }
+
+        private void tbsExportToExcel_Click(object sender, EventArgs e)
+        {
+            OnExportToExcelRequested?.Invoke(this, new EventArgs());
         }
 
         private void tsbCheckAll_Click(object sender, EventArgs e)

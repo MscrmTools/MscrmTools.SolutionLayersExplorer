@@ -12,7 +12,7 @@
     <description>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</description>
     <summary>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</summary>
     <releaseNotes>
-      Added layers properties comparison
+      Added Export Excel for Active Layers components (thanks to @gabrieljunckes)
     </releaseNotes>
     <tags>XrmToolBox Tool Solution Layer</tags>
     <dependencies>
