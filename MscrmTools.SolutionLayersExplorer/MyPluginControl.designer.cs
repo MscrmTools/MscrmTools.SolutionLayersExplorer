@@ -330,6 +330,7 @@ namespace MscrmTools.SolutionLayersExplorer
             this.componentsPicker1.OnActiveLayerRemovalRequested += new System.EventHandler(this.ComponentsPicker1_OnActiveLayerRemovalRequested);
             this.componentsPicker1.OnActiveLayerRequested += new System.EventHandler(this.ComponentsPicker1_OnActiveLayerRequested);
             this.componentsPicker1.OnSelected += new System.EventHandler(this.ComponentsPicker1_OnSelected);
+            this.componentsPicker1.OnExportToExcelRequested += new System.EventHandler(this.ComponentsPicker1_OnExportToExcelRequested);
             // 
             // tsbRemoveActiveLayer
             // 
