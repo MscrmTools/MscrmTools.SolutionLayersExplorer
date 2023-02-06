@@ -141,9 +141,9 @@ namespace MscrmTools.SolutionLayersExplorer
 
         private List<ExecuteMultipleResponseItem> Execute(List<RetrieveMultipleRequest> executeMultipleRequests, string progressMessage, BackgroundWorker bw)
         {
-            int batchSize = 750;
+            int batchSize = 500;
             int batchCount = 0;
-            int batchNumbers = Convert.ToInt32(decimal.Round(executeMultipleRequests.Count / batchSize, 0, MidpointRounding.AwayFromZero));
+            //int batchNumbers = Convert.ToInt32(decimal.Round(executeMultipleRequests.Count / batchSize, 0, MidpointRounding.AwayFromZero));
 
             ExecuteMultipleRequest bulkRequest = new ExecuteMultipleRequest
             {
@@ -162,7 +162,7 @@ namespace MscrmTools.SolutionLayersExplorer
             {
                 if (bw.CancellationPending) return bulkResponse;
 
-                bw.ReportProgress(0, $@"{progressMessage} ({batchCount + 1}/{batchNumbers})...");
+                bw.ReportProgress(0, $@"{progressMessage} ({batchCount * batchSize + batch.Count}/{executeMultipleRequests.Count})...");
 
                 bulkRequest.Requests.Clear();
                 bulkRequest.Requests.AddRange(batch);
