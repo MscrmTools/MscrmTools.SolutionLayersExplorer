@@ -14,6 +14,9 @@ namespace MscrmTools.SolutionLayersExplorer
     public class ExportToExcel
     {
         private readonly List<LayerExcelRow> _layers;
+        public IOrganizationService Service { get; }
+        public string FilePath { get; }
+
 
         public ExportToExcel(IOrganizationService service, string filePath)
         {
@@ -23,8 +26,6 @@ namespace MscrmTools.SolutionLayersExplorer
             _layers = new List<LayerExcelRow>();
         }
 
-        public IOrganizationService Service { get; }
-        public string FilePath { get; }
 
         public void Export(BackgroundWorker worker = null)
         {
@@ -143,7 +144,6 @@ namespace MscrmTools.SolutionLayersExplorer
         {
             int batchSize = 500;
             int batchCount = 0;
-            //int batchNumbers = Convert.ToInt32(decimal.Round(executeMultipleRequests.Count / batchSize, 0, MidpointRounding.AwayFromZero));
 
             ExecuteMultipleRequest bulkRequest = new ExecuteMultipleRequest
             {

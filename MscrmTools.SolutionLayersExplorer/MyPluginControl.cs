@@ -10,9 +10,6 @@ using MscrmTools.SolutionLayersExplorer.UserControls;
 using MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NuGet.Configuration;
-using NuGet.Packaging.Signing;
-using OfficeOpenXml;
 using ScintillaNET;
 using System;
 using System.Collections.Generic;
@@ -20,12 +17,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime;
 using System.Windows.Forms;
-using System.Windows.Shapes;
 using XrmToolBox.Extensibility;
 using XrmToolBox.Extensibility.Interfaces;
-using static System.Windows.Forms.LinkLabel;
 
 namespace MscrmTools.SolutionLayersExplorer
 {
