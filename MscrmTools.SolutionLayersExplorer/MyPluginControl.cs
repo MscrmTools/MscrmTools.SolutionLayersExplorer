@@ -173,8 +173,8 @@ namespace MscrmTools.SolutionLayersExplorer
                             {
                                 componentsPicker1.UncheckAll();
                                 ComponentsPicker1_OnSelected(null, new EventArgs());
-                                
-                                if(MessageBox.Show(this, "Completed! Would you like to open the generated file? (Requires Excel)", "Info", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+
+                                if (MessageBox.Show(this, "Completed! Would you like to open the generated file? (Requires Excel)", "Info", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
                                 {
                                     Process.Start(sfd.FileName);
                                 }
@@ -477,7 +477,7 @@ namespace MscrmTools.SolutionLayersExplorer
                             Name = "componenttype"
                         })).OptionSetMetadata).Options;
 
-            componentsDefs = definitions.Select(d => new Tuple<int, string>(d.GetAttributeValue<int>("objecttypecode"), d.GetAttributeValue<string>("name"))).ToList();
+            componentsDefs = definitions.Select(d => new Tuple<int, string>(d.GetAttributeValue<int>("solutioncomponenttype"), d.GetAttributeValue<string>("name"))).ToList();
             componentsDefs.AddRange(omc.Select(o => new Tuple<int, string>(o.Value.Value, o.Label?.UserLocalizedLabel?.Label ?? "")).ToList());
             componentsDefs.Add(new Tuple<int, string>(80, "Model driven app"));
         }
