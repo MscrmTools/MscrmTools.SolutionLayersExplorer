@@ -12,7 +12,7 @@
     <description>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</description>
     <summary>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</summary>
     <releaseNotes>
-      Fixed wrong label for some solution components (use of solutioncomponenttype instead of objecttypecode)
+      Fixed retrieve of active layer for component Plugin Step (SDK Message processing step)
     </releaseNotes>
     <tags>XrmToolBox Tool Solution Layer</tags>
     <dependencies>
