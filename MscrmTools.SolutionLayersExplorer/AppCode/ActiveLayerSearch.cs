@@ -40,6 +40,9 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
             {
                 if (bw.CancellationPending) return;
 
+                var componentName = ((ComponentType)item.Record.GetAttributeValue<OptionSetValue>("componenttype").Value).ToString();
+                if (componentName == "418") componentName = "msdyn_dataflow"; // Dataflow (418) is in fact a Workflow component
+
                 _bulk.Requests.Add(new RetrieveMultipleRequest
                 {
                     Query = new QueryExpression("msdyn_componentlayer")
@@ -50,7 +53,7 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
                         {
                             Conditions =
                             {
-                                new ConditionExpression("msdyn_solutioncomponentname",ConditionOperator.Equal, ((ComponentType)item.Record.GetAttributeValue<OptionSetValue>("componenttype").Value).ToString()),
+                                new ConditionExpression("msdyn_solutioncomponentname",ConditionOperator.Equal, componentName),
                                 new ConditionExpression("msdyn_componentid",ConditionOperator.Equal, item.Record.GetAttributeValue<Guid>("objectid")),
                             }
                         }
