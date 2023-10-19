@@ -69,7 +69,7 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
         /// <returns></returns>
         public int Compare(ListViewItem x, ListViewItem y)
         {
-            isNumericColumn = int.TryParse(x.SubItems[col].Text, out int _);
+            isNumericColumn = int.TryParse(x.SubItems[col].Text, out int _) && int.TryParse(y.SubItems[col].Text, out int _);
 
             if (isNumericColumn)
             {
