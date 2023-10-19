@@ -478,7 +478,7 @@ namespace MscrmTools.SolutionLayersExplorer
                         })).OptionSetMetadata).Options;
 
             componentsDefs = definitions.Select(d => new Tuple<int, string>(d.GetAttributeValue<int>("solutioncomponenttype"), d.GetAttributeValue<string>("name"))).ToList();
-            componentsDefs.AddRange(omc.Select(o => new Tuple<int, string>(o.Value.Value, o.Label?.UserLocalizedLabel?.Label ?? "")).ToList());
+            componentsDefs.AddRange(omc.Select(o => new Tuple<int, string>(o.Value.Value, o.Label?.UserLocalizedLabel?.Label ?? o.Value.ToString())).ToList());
             componentsDefs.Add(new Tuple<int, string>(80, "Model driven app"));
         }
 
