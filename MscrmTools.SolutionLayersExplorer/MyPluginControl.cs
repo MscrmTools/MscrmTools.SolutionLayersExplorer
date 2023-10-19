@@ -213,6 +213,56 @@ namespace MscrmTools.SolutionLayersExplorer
             }
 
             var list = new List<ListViewItem>();
+            if (components.First().Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 93 // SDK Plugin Step Image
+                )
+            {
+                lvItems.Columns.Add(new ColumnHeader
+                {
+                    Text = "Plugin step",
+                    Width = 120
+                });
+
+                var images = Service.RetrieveMultiple(new QueryExpression("sdkmessageprocessingstepimage")
+                {
+                    NoLock = true,
+                    ColumnSet = new ColumnSet("sdkmessageprocessingstepid"),
+                    Criteria = new FilterExpression
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression("sdkmessageprocessingstepimageid", ConditionOperator.In, components.Select(l => l.Record.GetAttributeValue<Guid>("objectid")).ToArray())
+                        }
+                    },
+                    LinkEntities =
+                    {
+                        new LinkEntity
+                        {
+                            LinkFromEntityName = "sdkmessageprocessingstepimage",
+                            LinkFromAttributeName = "sdkmessageprocessingstepid",
+                            LinkToAttributeName = "sdkmessageprocessingstepid",
+                            LinkToEntityName = "sdkmessageprocessingstep",
+                            EntityAlias = "step",
+                            Columns = new ColumnSet("name")
+                        }
+                    }
+                }).Entities;
+
+                lvItems.Items.AddRange(components
+                                    .Where(c => c.Layers?.Count > 1 && c.ActiveLayer != null)
+                                    .Select(i => new ListViewItem(i.ActiveLayer.GetAttributeValue<string>("msdyn_name"))
+                                    {
+                                        SubItems = {
+                                            new ListViewItem.ListViewSubItem
+                                            {
+                                                Text = images.FirstOrDefault(im =>im.Id == i.Record.GetAttributeValue<Guid>("objectid"))?.GetAttributeValue<AliasedValue>("step.name")?.Value?.ToString()
+                                            }
+                                            },
+                                        Tag = i
+                                    })
+                                    .ToArray());
+
+                return;
+            }
 
             if ((components.First().Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 2 // Attribute
                 || components.First().Record.GetAttributeValue<OptionSetValue>("componenttype").Value == 60 // Form
