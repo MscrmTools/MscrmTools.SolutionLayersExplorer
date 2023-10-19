@@ -131,7 +131,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
             var json1 = ((Layer)cbbLayers.SelectedItem).Record.GetAttributeValue<string>("msdyn_componentjson");
             var json2 = ((Layer)cbbLayers2.SelectedItem).Record.GetAttributeValue<string>("msdyn_componentjson");
 
-            var propertyName = cbbProperties.SelectedItem.ToString().Split(' ')[0];
+            var propertyName = cbbProperties.SelectedItem.ToString().Replace(" *","");
 
             try
             {
@@ -139,10 +139,26 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
                 var jo2 = JObject.Parse(json2);
 
                 var attrsLayer1 = (JArray)jo1["Attributes"];
-                var attrLayer1 = ((JObject)attrsLayer1.First(a => ((JObject)a).Value<string>("Key") == propertyName)).GetValue("Value");
+                var attrLayer1 = ((JObject)attrsLayer1.FirstOrDefault(a => ((JObject)a).Value<string>("Key") == propertyName))?.GetValue("Value");
+                if (attrLayer1 == null)
+                {
+                    attrLayer1 = ((JObject)attrsLayer1.FirstOrDefault(a => ((JObject)a).Value<string>("Key") == cbbProperties.SelectedItem.ToString()))?.GetValue("Value");
+                    if (attrLayer1 == null)
+                    {
+                        throw new Exception($"Unable to find properties {cbbProperties.SelectedItem} in first layer");
+                    }
+                }
 
                 var attrsLayer2 = (JArray)jo2["Attributes"];
-                var attrLayer2 = ((JObject)attrsLayer2.First(a => ((JObject)a).Value<string>("Key") == propertyName)).GetValue("Value");
+                var attrLayer2 = ((JObject)attrsLayer2.FirstOrDefault(a => ((JObject)a).Value<string>("Key") == propertyName))?.GetValue("Value");
+                if (attrLayer2 == null)
+                {
+                    attrLayer2 = ((JObject)attrsLayer1.FirstOrDefault(a => ((JObject)a).Value<string>("Key") == cbbProperties.SelectedItem.ToString()))?.GetValue("Value");
+                    if (attrLayer2 == null)
+                    {
+                        throw new Exception($"Unable to find properties {cbbProperties.SelectedItem} in second layer");
+                    }
+                }
 
                 if (((Layer)cbbLayers.SelectedItem).Record.GetAttributeValue<string>("msdyn_solutioncomponentname") == "WebResource" && propertyName == "content")
                 {
