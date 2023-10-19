@@ -73,7 +73,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
 
         public void LoadComponents(Guid solutionId)
         {
-            var solutions = Service.RetrieveMultiple(new QueryExpression("solutioncomponent")
+            var solutionComponents = Service.RetrieveMultiple(new QueryExpression("solutioncomponent")
             {
                 NoLock = true,
                 ColumnSet = new ColumnSet(true),
@@ -86,10 +86,32 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
                 }
             }).Entities;
 
-            _components = solutions.ToList();
+            _components = solutionComponents.ToList();
+
+            var pluginStepComponents = _components.Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 92).ToList();
+            if (pluginStepComponents.Any())
+            {
+
+                var query = new QueryExpression("sdkmessageprocessingstepimage")
+                {
+                    Criteria = new FilterExpression(LogicalOperator.Or)
+                    
+                };
+                query.Criteria.Conditions.AddRange(pluginStepComponents.Select(p => new ConditionExpression("sdkmessageprocessingstepid", ConditionOperator.Equal, p.GetAttributeValue<Guid>("objectid"))));
+                var images = Service.RetrieveMultiple(query).Entities.Select(e => new Entity("solutioncomponent")
+                {
+                    Attributes =
+                    {
+                        {"componenttype",new OptionSetValue(93) },
+                        {"objectid", e.Id }
+                    }
+                });
+
+                _components.AddRange(images);
+            }
 
             List<EntityMetadata> emds = new List<EntityMetadata>();
-            var rels = solutions.Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 10).ToList();
+            var rels = solutionComponents.Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 10).ToList();
             if (rels.Count > 0)
             {
                 var relMetadataIds = rels
@@ -115,11 +137,11 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
 
                 emds = ((RetrieveMetadataChangesResponse)Service.Execute(retrieveMetadataChangesRequest)).EntityMetadata.ToList();
                 var relsToExclude = emds.SelectMany(e => e.ManyToOneRelationships).Where(r => r.ReferencingAttribute == "regardingobjectid").Select(r => r.MetadataId).ToList();
-                _components = _components.Except(solutions.Where(c => relsToExclude.Contains(c.GetAttributeValue<Guid>("objectid")))).ToList();
+                _components = _components.Except(solutionComponents.Where(c => relsToExclude.Contains(c.GetAttributeValue<Guid>("objectid")))).ToList();
             }
 
             emds = new List<EntityMetadata>();
-            var fullEntities = solutions.Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 1 && c.GetAttributeValue<OptionSetValue>("rootcomponentbehavior").Value == 0).ToList();
+            var fullEntities = solutionComponents.Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 1 && c.GetAttributeValue<OptionSetValue>("rootcomponentbehavior").Value == 0).ToList();
             if (fullEntities.Any())
             {
                 var entityQueryExpression = new EntityQueryExpression
@@ -268,14 +290,14 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             OnSelected?.Invoke(this, new EventArgs());
         }
 
-        private void tbsLoadActiveLayers_Click(object sender, EventArgs e)
-        {
-            OnActiveLayerRequested?.Invoke(this, new EventArgs());
-        }
-
         private void tbsExportToExcel_Click(object sender, EventArgs e)
         {
             OnExportToExcelRequested?.Invoke(this, new EventArgs());
+        }
+
+        private void tbsLoadActiveLayers_Click(object sender, EventArgs e)
+        {
+            OnActiveLayerRequested?.Invoke(this, new EventArgs());
         }
 
         private void tsbCheckAll_Click(object sender, EventArgs e)

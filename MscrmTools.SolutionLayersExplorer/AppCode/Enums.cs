@@ -229,7 +229,8 @@
         SdkMessageProcessingStep = 92,
 
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        SDKMessageProcessingStepImage = 93,
+        //SDKMessageProcessingStepImage = 93,
+        SdkMessageProcessingStepImage = 93,
 
         [System.Runtime.Serialization.EnumMemberAttribute()]
         SdkMessageRequest = 204,
