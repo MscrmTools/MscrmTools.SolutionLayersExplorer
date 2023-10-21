@@ -109,7 +109,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
             string text = ((ComboBox)sender).Items[e.Index].ToString();
 
             Brush brush;
-            if (text.EndsWith("*"))// compare  date with your list.
+            if (text.EndsWith("*") && !chkShowOnlyDiff.Checked)// compare  date with your list.
             {
                 brush = Brushes.Red;
             }
@@ -119,7 +119,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
             }
 
             // Draw the text
-            e.Graphics.DrawString(text.Split(' ')[0], ((Control)sender).Font, brush, e.Bounds.X, e.Bounds.Y);
+            e.Graphics.DrawString(text.ToString().Replace(" *", ""), ((Control)sender).Font, brush, e.Bounds.X, e.Bounds.Y);
         }
 
         private void cbbProperties_SelectedIndexChanged(object sender, EventArgs e)
@@ -131,7 +131,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
             var json1 = ((Layer)cbbLayers.SelectedItem).Record.GetAttributeValue<string>("msdyn_componentjson");
             var json2 = ((Layer)cbbLayers2.SelectedItem).Record.GetAttributeValue<string>("msdyn_componentjson");
 
-            var propertyName = cbbProperties.SelectedItem.ToString().Replace(" *","");
+            var propertyName = cbbProperties.SelectedItem.ToString().Replace(" *", "");
 
             try
             {
@@ -176,6 +176,11 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
             {
                 MessageBox.Show(this, $"An error occured when parsing content: {error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void chkShowOnlyDiff_CheckedChanged(object sender, EventArgs e)
+        {
+            FillAttributes();
         }
 
         private void Compare(string contentA, string contentB, string titleA, string titleB)
@@ -267,7 +272,10 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
 
                         if (JToken.DeepEquals(value1, value2))
                         {
-                            cbbProperties.Items.Add(attr1.Value<string>("Key"));
+                            if (!chkShowOnlyDiff.Checked)
+                            {
+                                cbbProperties.Items.Add(attr1.Value<string>("Key"));
+                            }
                         }
                         else
                         {
