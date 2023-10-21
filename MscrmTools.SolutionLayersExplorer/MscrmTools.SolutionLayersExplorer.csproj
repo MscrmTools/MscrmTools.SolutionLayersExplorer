@@ -282,6 +282,12 @@
     <Compile Include="AppCode\ListViewItemComparer.cs" />
     <Compile Include="AppCode\Options.cs" />
     <Compile Include="ExportToExcel.cs" />
+    <Compile Include="Forms\EntitySelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EntitySelector.Designer.cs">
+      <DependentUpon>EntitySelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="MyPlugin.cs" />
     <Compile Include="MyPluginControl.cs">
       <SubType>UserControl</SubType>
@@ -363,6 +369,9 @@
     <None Include="MscrmTools.SolutionLayersExplorer.nuspec" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\EntitySelector.resx">
+      <DependentUpon>EntitySelector.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MyPluginControl.resx">
       <DependentUpon>MyPluginControl.cs</DependentUpon>
     </EmbeddedResource>

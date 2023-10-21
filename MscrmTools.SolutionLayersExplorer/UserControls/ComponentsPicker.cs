@@ -32,6 +32,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
 
         public event EventHandler OnSelected;
 
+        public List<ListViewItem> Components => lvComponents.Items.Cast<ListViewItem>().ToList();
         public List<LayerItem> SelectedComponent => lvComponents.SelectedItems.Cast<ListViewItem>().FirstOrDefault()?.Tag as List<LayerItem>;
         public List<ListViewItem> SelectedComponents => lvComponents.GetCheckedOrSelectedItems();
         public CrmServiceClient Service { get; set; }
@@ -91,11 +92,9 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             var pluginStepComponents = _components.Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 92).ToList();
             if (pluginStepComponents.Any())
             {
-
                 var query = new QueryExpression("sdkmessageprocessingstepimage")
                 {
                     Criteria = new FilterExpression(LogicalOperator.Or)
-                    
                 };
                 query.Criteria.Conditions.AddRange(pluginStepComponents.Select(p => new ConditionExpression("sdkmessageprocessingstepid", ConditionOperator.Equal, p.GetAttributeValue<Guid>("objectid"))));
                 var images = Service.RetrieveMultiple(query).Entities.Select(e => new Entity("solutioncomponent")
@@ -203,7 +202,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
                     ["objectid"] = e.MetadataId,
                     ["componenttype"] = new OptionSetValue(3),
                 }).ToArray());
-                _components.AddRange(emds.SelectMany(e => e.ManyToManyRelationships).Select(e => new Entity("solutioncomponent")
+                _components.AddRange(emds.SelectMany(e => e.ManyToOneRelationships).Select(e => new Entity("solutioncomponent")
                 {
                     ["objectid"] = e.MetadataId,
                     ["componenttype"] = new OptionSetValue(3),

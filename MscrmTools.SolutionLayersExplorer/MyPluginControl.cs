@@ -6,6 +6,7 @@ using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Tooling.Connector;
 using MscrmTools.SolutionLayersExplorer.AppCode;
+using MscrmTools.SolutionLayersExplorer.Forms;
 using MscrmTools.SolutionLayersExplorer.UserControls;
 using MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons;
 using Newtonsoft.Json;
@@ -912,6 +913,25 @@ namespace MscrmTools.SolutionLayersExplorer
                 component.SubItems[2].Text = "...";
             }
 
+            var entitiesComponent = componentsPicker1.Components.FirstOrDefault(c => ((List<LayerItem>)c.Tag).FirstOrDefault()?.Record.GetAttributeValue<OptionSetValue>("componenttype")?.Value == 1);
+            var hasSubEntityComponent = components.FirstOrDefault(c => new int[] { 2, 3, 26, 59, 60 }.Contains(((List<LayerItem>)c.Tag).FirstOrDefault()?.Record.GetAttributeValue<OptionSetValue>("componenttype")?.Value ?? -1)) != null;
+            List<EntityMetadata> filteredTables = new List<EntityMetadata>();
+            if (entitiesComponent != null && hasSubEntityComponent)
+            {
+                var ids = ((List<LayerItem>)entitiesComponent.Tag).Select(li => li.Record.GetAttributeValue<Guid>("objectid")).ToList();
+                var tables = Service.GetTablesById(ids.ToArray(),
+                    new[] { "MetadataId", "DisplayName", "SchemaName", "Attributes", "ManyToManyRelationships", "OneToManyRelationships", "ManyToOneRelationships" },
+                    new[] { "MetadataId" },
+                    new[] { "MetadataId" });
+
+                using (var dialog = new EntitySelector(tables))
+                {
+                    dialog.ShowDialog(this);
+                    if (dialog.DialogResult == DialogResult.Cancel || dialog.SelectTables.Count == 0) return;
+                    filteredTables = dialog.SelectTables.Count == tables.Count ? new List<EntityMetadata>() : dialog.SelectTables;
+                }
+            }
+
             SetRunningStatus(true);
 
             WorkAsync(new WorkAsyncInfo
@@ -930,6 +950,70 @@ namespace MscrmTools.SolutionLayersExplorer
                         if (items == null) continue;
 
                         bw.ReportProgress(0, $"Loading active layers for {component.Text}...");
+
+                        if (filteredTables.Count > 0)
+                        {
+                            if (items.FirstOrDefault()?.Record.GetAttributeValue<OptionSetValue>("componenttype")?.Value == 2)
+                            {
+                                items = items.Where(i => filteredTables.Any(t => t.Attributes.Any(a => a.MetadataId.Value == i.Record.GetAttributeValue<Guid>("objectid")))).ToList();
+                            }
+
+                            if (items.FirstOrDefault()?.Record.GetAttributeValue<OptionSetValue>("componenttype")?.Value == 3)
+                            {
+                                items = items.Where(i => filteredTables.Any(t => t.ManyToManyRelationships.Any(a => a.MetadataId.Value == i.Record.GetAttributeValue<Guid>("objectid"))
+                                || t.ManyToOneRelationships.Any(a => a.MetadataId.Value == i.Record.GetAttributeValue<Guid>("objectid"))
+                                || t.OneToManyRelationships.Any(a => a.MetadataId.Value == i.Record.GetAttributeValue<Guid>("objectid"))
+                                )).ToList();
+                            }
+
+                            if (items.FirstOrDefault()?.Record.GetAttributeValue<OptionSetValue>("componenttype")?.Value == 26)
+                            {
+                                var savedQueryIds = Service.RetrieveMultiple(new QueryExpression("savedquery")
+                                {
+                                    Criteria = new FilterExpression
+                                    {
+                                        Conditions =
+                                    {
+                                        new ConditionExpression("returnedtypecode", ConditionOperator.In, filteredTables.Select(t => t.SchemaName.ToLower()).ToArray())
+                                    }
+                                    }
+                                }).Entities.Select(sq => sq.Id);
+
+                                items = items.Where(i => savedQueryIds.Any(id => id == i.Record.GetAttributeValue<Guid>("objectid"))).ToList();
+                            }
+
+                            if (items.FirstOrDefault()?.Record.GetAttributeValue<OptionSetValue>("componenttype")?.Value == 59)
+                            {
+                                var savedQueryIds = Service.RetrieveMultiple(new QueryExpression("savedqueryvisualization")
+                                {
+                                    Criteria = new FilterExpression
+                                    {
+                                        Conditions =
+                                    {
+                                        new ConditionExpression("primaryentitytypecode", ConditionOperator.In, filteredTables.Select(t => t.SchemaName.ToLower()).ToArray())
+                                    }
+                                    }
+                                }).Entities.Select(sq => sq.Id);
+
+                                items = items.Where(i => savedQueryIds.Any(id => id == i.Record.GetAttributeValue<Guid>("objectid"))).ToList();
+                            }
+
+                            if (items.FirstOrDefault()?.Record.GetAttributeValue<OptionSetValue>("componenttype")?.Value == 60)
+                            {
+                                var savedQueryIds = Service.RetrieveMultiple(new QueryExpression("systemform")
+                                {
+                                    Criteria = new FilterExpression
+                                    {
+                                        Conditions =
+                                    {
+                                        new ConditionExpression("objecttypecode", ConditionOperator.In, filteredTables.Select(t => t.SchemaName.ToLower()).ToArray())
+                                    }
+                                    }
+                                }).Entities.Select(sq => sq.Id);
+
+                                items = items.Where(i => savedQueryIds.Any(id => id == i.Record.GetAttributeValue<Guid>("objectid"))).ToList();
+                            }
+                        }
 
                         var als = new ActiveLayerSearch((CrmServiceClient)Service);
                         als.GetActiveLayers(items, bw, component.Text);
