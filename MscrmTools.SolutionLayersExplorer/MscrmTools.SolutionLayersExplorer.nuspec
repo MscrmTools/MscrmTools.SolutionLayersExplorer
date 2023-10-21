@@ -12,7 +12,9 @@
     <description>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</description>
     <summary>An XrmToolBox tool that allows to explore and delete unmanaged layers of your Dataverse solutions</summary>
     <releaseNotes>
-      Fixed retrieve of active layer for component Data flow
+      Added table filter for table sub components active layer search
+      Show only changed properties by default when comparing layers
+      Show difference in screen by default instead of full screen when comparing layers
     </releaseNotes>
     <tags>XrmToolBox Tool Solution Layer</tags>
     <dependencies>
