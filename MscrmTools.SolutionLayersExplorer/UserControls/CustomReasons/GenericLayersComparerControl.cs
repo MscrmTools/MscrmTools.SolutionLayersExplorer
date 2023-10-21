@@ -95,6 +95,11 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
             return result;
         }
 
+        private void btnShowDiffFullScreen_Click(object sender, EventArgs e)
+        {
+            OnFullScreenRequested?.Invoke(this, new EventArgs());
+        }
+
         private void cbbLayers_SelectedIndexChanged(object sender, EventArgs e)
         {
             FillAttributes();
@@ -169,8 +174,7 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls.CustomReasons
                 Compare(attrLayer1.ToString(), attrLayer2.ToString(), ((Layer)cbbLayers.SelectedItem).ToString(), ((Layer)cbbLayers2.SelectedItem).ToString());
 
                 diffControl.Visible = true;
-
-                OnFullScreenRequested?.Invoke(this, new EventArgs());
+                btnShowDiffFullScreen.Visible = true;
             }
             catch (Exception error)
             {
