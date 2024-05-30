@@ -92,21 +92,26 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
             var pluginStepComponents = _components.Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 92).ToList();
             if (pluginStepComponents.Any())
             {
-                var query = new QueryExpression("sdkmessageprocessingstepimage")
+                foreach (var pluginStepComponentChunk in pluginStepComponents.Chunk(500))
                 {
-                    Criteria = new FilterExpression(LogicalOperator.Or)
-                };
-                query.Criteria.Conditions.AddRange(pluginStepComponents.Select(p => new ConditionExpression("sdkmessageprocessingstepid", ConditionOperator.Equal, p.GetAttributeValue<Guid>("objectid"))));
-                var images = Service.RetrieveMultiple(query).Entities.Select(e => new Entity("solutioncomponent")
-                {
-                    Attributes =
+                    var query = new QueryExpression("sdkmessageprocessingstepimage")
+                    {
+                        Criteria = new FilterExpression(LogicalOperator.Or)
+                    };
+                    query.Criteria.Conditions.AddRange(pluginStepComponentChunk.Select(p => new ConditionExpression("sdkmessageprocessingstepid", ConditionOperator.Equal, p.GetAttributeValue<Guid>("objectid"))));
+                    var images = Service.RetrieveMultiple(query).Entities.Select(e => new Entity("solutioncomponent")
+                    {
+                        Attributes =
                     {
                         {"componenttype",new OptionSetValue(93) },
                         {"objectid", e.Id }
                     }
-                });
+                    });
 
-                _components.AddRange(images);
+                    _components.AddRange(images);
+                }
+                
+
             }
 
             List<EntityMetadata> emds = new List<EntityMetadata>();
