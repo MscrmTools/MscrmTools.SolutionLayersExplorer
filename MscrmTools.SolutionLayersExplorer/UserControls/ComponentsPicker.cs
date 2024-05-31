@@ -96,7 +96,8 @@ namespace MscrmTools.SolutionLayersExplorer.UserControls
                 {
                     Criteria = new FilterExpression(LogicalOperator.Or)
                 };
-                query.Criteria.Conditions.AddRange(pluginStepComponents.Select(p => new ConditionExpression("sdkmessageprocessingstepid", ConditionOperator.Equal, p.GetAttributeValue<Guid>("objectid"))));
+                query.Criteria.Conditions.Add(new ConditionExpression("sdkmessageprocessingstepid", ConditionOperator.In, pluginStepComponents.Select(p => p.GetAttributeValue<Guid>("objectid")).ToArray()));
+
                 var images = Service.RetrieveMultiple(query).Entities.Select(e => new Entity("solutioncomponent")
                 {
                     Attributes =
