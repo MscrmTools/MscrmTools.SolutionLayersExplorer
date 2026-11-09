@@ -43,21 +43,37 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
                 var componentName = ((ComponentType)item.Record.GetAttributeValue<OptionSetValue>("componenttype").Value).ToString();
                 if (componentName == "418") componentName = "msdyn_dataflow"; // Dataflow (418) is in fact a Workflow component
 
-                _bulk.Requests.Add(new RetrieveMultipleRequest
+                var query = new QueryExpression("msdyn_componentlayer")
                 {
-                    Query = new QueryExpression("msdyn_componentlayer")
+                    ColumnSet = new ColumnSet(true),
+                    Criteria = new FilterExpression
                     {
-                        NoLock = true,
-                        ColumnSet = new ColumnSet(true),
-                        Criteria = new FilterExpression
-                        {
-                            Conditions =
+                        Conditions =
                             {
-                                new ConditionExpression("msdyn_solutioncomponentname",ConditionOperator.Equal, componentName),
                                 new ConditionExpression("msdyn_componentid",ConditionOperator.Equal, item.Record.GetAttributeValue<Guid>("objectid")),
                             }
-                        }
                     }
+                };
+
+                if (int.TryParse(componentName, out int iComponentName))
+                {
+                    if (iComponentName >= 10000)
+                    {
+                        query.Criteria.Conditions.Add(new ConditionExpression("msdyn_solutioncomponentname", ConditionOperator.Equal, componentType));
+                    }
+                    else
+                    {
+                        query.Criteria.Conditions.Add(new ConditionExpression("msdyn_solutioncomponentname", ConditionOperator.Equal, componentName));
+                    }
+                }
+                else
+                {
+                    query.Criteria.Conditions.Add(new ConditionExpression("msdyn_solutioncomponentname", ConditionOperator.Equal, componentName));
+                }
+
+                _bulk.Requests.Add(new RetrieveMultipleRequest
+                {
+                    Query = query
                 });
 
                 processed++;
@@ -98,7 +114,7 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
                 foreach (var response in bulkResp.Responses)
                 {
                     var request = (RetrieveMultipleRequest)_bulk.Requests[response.RequestIndex];
-                    var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.Last().Values.First();
+                    var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.First().Values.First();
 
                     var item = items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId);
 
