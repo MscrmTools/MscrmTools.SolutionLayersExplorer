@@ -91,7 +91,7 @@ namespace MscrmTools.SolutionLayersExplorer.AppCode
                     foreach (var response in bulkResp.Responses)
                     {
                         var request = (RetrieveMultipleRequest)_bulk.Requests[response.RequestIndex];
-                        var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.Last().Values.First();
+                        var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.Single(x => x.AttributeName == "msdyn_componentid").Values.First();
 
                         var objectItem = items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId);
 
